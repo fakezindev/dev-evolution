@@ -1,0 +1,14 @@
+package com.eniac.devevolution.dtos;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+public record StudentRequest(
+        @NotBlank String nome,
+        @NotBlank @Email String email,
+        @NotBlank String curso,
+        @NotNull LocalDate dataNascimento
+) {
+}
