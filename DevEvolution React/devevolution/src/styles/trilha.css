@@ -1,64 +1,116 @@
 @import "theme.css";
 
-.container-trilha{
-    display:flex;
-    text-align: center;
-    justify-content: center;
-    flex-direction: column;
-
-}
-.container-trilha h1{
-    color: white;
+.trilha-container h1{
     font-size: 50px;
-    font-weight: bold;
-    margin-bottom: 0px;
+    color: white;
+    font-weight: bolder;
+    margin-bottom: 2px;
 }
-.container-trilha h3{
-    margin: 3px 0px;
+.trilha-container{
+  text-align:center;
+  padding-top:40px;
 }
 
-.trilha{
-    position:relative;
-    margin-top:50px;
-    }
-    
-    
-    .trilha::before{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:0;
-    width:10px;
-    height:100%;
-    background:#243a5e;
-    transform:translateX(-50%);
-    border-radius: 50%;
-    }
-    
-    .nivel{
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:60px auto;
-    font-size:30px;
-    position:relative;
-    color: white;
-    cursor: pointer;
-    transition: 0.3s;
-    }
-    .nivel:hover{
-        scale: 1.05;
-        transition: 0.3s;
-        box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.200);
-        
-    }
-    .ativo{
-    background:#3b82f6;
-    }
-    
-    .bloqueado{
-    background:#374151;
-    }
+.subtitle{
+  color:#8fa1c2;
+  font-size: 1.5rem;
+  margin-bottom:70px;
+}
+
+/* container */
+.trilha-vertical{
+  position:relative;
+  height:600px;
+  width:300px;
+  margin:auto;
+}
+
+/* linha progresso */
+.linha{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:10px;
+  height:100%;
+  background:#1f3761;
+  border-radius:10px;
+}
+
+/* niveis */
+.nivel{
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  transition:0.3s;
+}
+
+/* zigue-zague */
+.left{
+  left:0;
+}
+
+.right{
+  right:0;
+}
+
+/* posições verticais */
+.nivel:nth-child(2){ top:0 }
+.nivel:nth-child(3){ top:150px }
+.nivel:nth-child(4){ top:300px }
+.nivel:nth-child(5){ top:450px }
+
+/* circulo */
+.circulo{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  transition:0.3s;
+}
+
+/* ativo */
+.ativo .circulo{
+  background:#3b82f6;
+  box-shadow:0 0 20px rgba(59,130,246,0.6);
+}
+
+/* feito */
+.feito .circulo{
+  background:#22c55e;
+}
+
+/* bloqueado */
+.bloqueado{
+  cursor:not-allowed;
+}
+
+.bloqueado .circulo{
+  background:#2a3a55;
+  opacity:0.5;
+}
+
+.bloqueado span{
+  opacity:0.5;
+}
+
+
+/* hover efeito */
+.circulo:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 25px rgba(255,255,255,0.3);
+}
+.nivel:active .circulo{
+  transform: scale(0.95);
+}
+
+/* texto */
+.nivel span{
+  color:#fff;
+  font-weight:500;
+  max-width:120px;
+}

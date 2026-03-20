@@ -1,0 +1,144 @@
+.licao-container{
+  padding:40px;
+  color:#fff;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.licao-container h1{
+  margin: auto;
+}
+.subtitle{
+  margin: auto;
+  color:#8fa1c2;
+  margin-bottom:30px;
+}
+
+.licao-grid{
+  display:flex;
+  gap:40px;
+}
+
+/* ESQUERDA */
+.dados-box{
+  width:40%;
+}
+
+.dados-area{
+  border:2px dashed #2a3a55;
+  border-radius:20px;
+  padding:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+}
+
+/* DIREITA */
+.gavetas-box{
+  width:60%;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* GAVETAS */
+.gaveta{
+  position:relative;
+  min-height:120px;
+  border-radius:20px;
+  padding:25px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+/* LABEL flutuante */
+.label{
+  position:absolute;
+  top:-12px;
+  left:20px;
+  background:#0b1a33;
+  padding:5px 12px;
+  border-radius:10px;
+  font-size:14px;
+}
+
+
+.string{
+  border:3px solid #00ff88;
+  background:rgba(0,255,136,0.05);
+}
+
+.number{
+  border:3px solid #a855f7;
+  background:rgba(168,85,247,0.05);
+}
+
+.boolean{
+  border:3px solid #ff7a00;
+  background:rgba(255,122,0,0.05);
+}
+
+/* ITENS */
+.item{
+  background:#1f2f4a;
+  padding:12px 18px;
+  border-radius:12px;
+  cursor:grab;
+  transition:0.2s;
+  animation: aparecer 0.3s ease;
+}
+
+@keyframes aparecer{
+  from{
+    transform:scale(0.7);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+.erro{
+  animation: erroAnim 0.4s;
+}
+
+@keyframes erroAnim{
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); background: rgba(255,0,0,0.2); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.item:hover{
+  transform:scale(1.05);
+}
+
+.item:active{
+  cursor:grabbing;
+}
+
+.small{
+  font-size:14px;
+}
+
+/* BOTÃO */
+.btn-finalizar{
+  
+  margin:30px 10px 0px 15px;
+  width: 200px;
+  padding:12px 25px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:#fff;
+  cursor:pointer;
+  transition: 0.7s;
+}
+.btn-finalizar:hover{
+  transition: 0.7s;
+  scale: 0.992;
+  background-color: #1da950;
+}

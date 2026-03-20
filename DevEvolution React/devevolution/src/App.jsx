@@ -11,11 +11,10 @@ import Login from "./pages/Login"
 import LoginUser from "./pages/LoginUser"
 import Perfil from "./pages/Perfil"
 import Ligas from "./pages/Ligas"
+import Licao1 from "./pages/Licao1"
 
 function PrivateRoute({ children }) {
-
   const auth = localStorage.getItem("auth")
-
   return auth ? children : <Navigate to="/login" />
 }
 
@@ -36,13 +35,11 @@ function Layout({ children }) {
 
 function App() {
   return (
-
     <Routes>
 
       <Route path="/" element={<Navigate to="/cadastro" />} />
 
       <Route path="/cadastro" element={<Login />} />
-
       <Route path="/login" element={<LoginUser />} />
 
       <Route 
@@ -78,8 +75,15 @@ function App() {
         }
       />
 
+      <Route 
+  path="/licao/:id"
+  element={
+    <Layout>
+      <Licao1 />
+    </Layout>
+  }
+/>
     </Routes>
-
   )
 }
 
