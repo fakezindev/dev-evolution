@@ -56,7 +56,7 @@ public class StudentService {
     }
 
     private Student mapToEntity(Student student, StudentRequest request) {
-        student.setNome(request.nome());
+        student.setUsername(request.username());
         student.setEmail(request.email());
         student.setCurso(request.curso());
         student.setDataNascimento(request.dataNascimento());
@@ -66,7 +66,7 @@ public class StudentService {
     private StudentResponse toResponse(Student student) {
         return new StudentResponse(
                 student.getId(),
-                student.getNome(),
+                student.getUsername(),
                 student.getEmail(),
                 student.getCurso(),
                 student.getDataNascimento()

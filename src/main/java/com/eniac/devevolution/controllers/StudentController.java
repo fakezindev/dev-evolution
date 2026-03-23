@@ -2,9 +2,12 @@ package com.eniac.devevolution.controllers;
 
 import com.eniac.devevolution.dtos.StudentRequest;
 import com.eniac.devevolution.dtos.StudentResponse;
+import com.eniac.devevolution.repositories.StudentRepository;
 import com.eniac.devevolution.services.StudentService;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/alunos")
 public class StudentController {
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     private final StudentService studentService;
 
@@ -50,5 +56,29 @@ public class StudentController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/meu-perfil")
+    public ResponseEntity<StudentResponse> buscarMeuPerfil(org.springframework.security.core.Authentication authentication) {
+
+        // Pega o nome do usuário que está dentro do Token JWT
+        String username = authentication.getName();
+
+        // Busca o aluno no banco
+        var student = studentRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        // Converte para o DTO atualizado e devolve
+        StudentResponse response = new StudentResponse(
+                student.getId(),
+                student.getUsername(),
+                student.getEmail(),
+                student.getCurso(),
+                student.getDataNascimento(),
+                student.getXpTotal(),
+                student.getVidasAtuais()
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

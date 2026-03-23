@@ -4,9 +4,11 @@ import java.time.LocalDate;
 
 public record StudentResponse(
         Long id,
-        String nome,
+        String username,
         String email,
         String curso,
-        LocalDate dataNascimento
+        LocalDate dataNascimento,
+        Integer xpTotal,
+        Integer vidasAtuais
 ) {
 }

@@ -1,17 +1,17 @@
 package com.eniac.devevolution.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
+import java.util.List;
+
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @Table(name = "tb_students")
+@NoArgsConstructor
 public class Student {
 
     @Id
@@ -19,7 +19,7 @@ public class Student {
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -29,4 +29,14 @@ public class Student {
 
     @Column(nullable = false)
     private LocalDate dataNascimento;
+
+    @Column(name = "xp_total", nullable = false, columnDefinition = "integer default 0")
+    private Integer xpTotal = 0;
+
+    @Column(name = "vidas_atuais", nullable = false, columnDefinition = "integer default 3")
+    private Integer vidasAtuais = 3;
+
+    // Relação 1:N - Um aluno tem vários progressos (um para cada desafio)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<ProgressoAluno> progressos;
 }

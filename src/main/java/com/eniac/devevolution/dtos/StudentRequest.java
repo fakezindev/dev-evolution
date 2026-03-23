@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record StudentRequest(
-        @NotBlank String nome,
+        @NotBlank String username,
         @NotBlank @Email String email,
         @NotBlank String curso,
         @NotNull LocalDate dataNascimento
