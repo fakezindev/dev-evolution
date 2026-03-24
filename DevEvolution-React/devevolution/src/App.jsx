@@ -7,7 +7,7 @@ import Sidebar from "./components/Sidebar"
 import Topbar from "./components/Topbar"
 
 import Trilha from "./pages/Trilha"
-import Login from "./pages/Login"
+import Cadastro from "./pages/Cadastro"
 import LoginUser from "./pages/LoginUser"
 import Perfil from "./pages/Perfil"
 import Ligas from "./pages/Ligas"
@@ -39,7 +39,7 @@ function App() {
 
       <Route path="/" element={<Navigate to="/cadastro" />} />
 
-      <Route path="/cadastro" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/login" element={<LoginUser />} />
 
       <Route 

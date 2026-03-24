@@ -3,38 +3,62 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
 function LoginUser() {
-
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState("")
+  // Mudamos de 'email' para 'username' para bater com o Spring Security
+  const [username, setUsername] = useState("") 
   const [senha, setSenha] = useState("")
+  const [carregando, setCarregando] = useState(false)
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-
-    const usuarioSalvo = JSON.parse(localStorage.getItem("usuario"))
-
-    if (!usuarioSalvo) {
-      alert("Nenhum usuário cadastrado")
+    
+    if (!username || !senha) {
+      alert("Preencha todos os campos!")
       return
     }
 
-    if (email === usuarioSalvo.email && senha === usuarioSalvo.senha) {
+    setCarregando(true)
+
+    try {
+      // Bate na porta do Spring Boot para validar as credenciais
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username,
+          password: senha
+        })
+      })
+
+      // Se o Spring devolver 403 Forbidden ou outro erro...
+      if (!response.ok) {
+        throw new Error("Usuário ou senha incorretos!")
+      }
+
+      // Se deu 200 OK, abrimos o pacote para pegar o Token
+      const data = await response.json()
+      const token = data.token // Ajuste se a sua AuthResponse usar outro nome de variável
+
+      // Guarda a chave do castelo no navegador
+      localStorage.setItem("token", token)
       localStorage.setItem("auth", "true")
+
+      // Corre pro painel do jogo!
       navigate("/dashboard")
-    } else {
-      alert("Email ou senha incorretos")
+
+    } catch (error) {
+      console.error("Falha no login:", error)
+      alert(error.message)
+    } finally {
+      setCarregando(false)
     }
   }
 
   return (
-
     <form onSubmit={handleLogin}>
-
       <div className="login-page">
-
         <div className="login-card">
-
           <div className="logo-box">
             <img src="/images/DevEvolution-logo-simple.png" alt="logo" />
           </div>
@@ -45,13 +69,14 @@ function LoginUser() {
             Entre na sua conta para continuar evoluindo.
           </p>
 
+          {/* Ajustado para pedir o Nome de Usuário em vez do E-mail */}
           <div className="input-group">
-            <label>Seu e-mail</label>
+            <label>Seu nome de usuário</label>
             <input
-              type="email"
-              placeholder="Ex: seuemail@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Digite seu username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
@@ -67,21 +92,21 @@ function LoginUser() {
             />
           </div>
 
-          <button type="submit" className="start-btn">
-            Entrar →
+          <button type="submit" className="start-btn" disabled={carregando}>
+            {carregando ? "Entrando..." : "Entrar →"}
           </button>
 
           <div className="divider"></div>
 
           <p className="login-link">
-            Ainda não tem conta? 
-            <span onClick={() => navigate("/cadastro")}> Criar conta</span>
+            Ainda não tem conta?{" "}
+            <span onClick={() => navigate("/cadastro")} style={{cursor: 'pointer', color: '#007bff'}}>
+              Criar conta
+            </span>
           </p>
 
         </div>
-
       </div>
-
     </form>
   )
 }
