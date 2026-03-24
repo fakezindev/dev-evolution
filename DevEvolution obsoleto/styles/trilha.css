@@ -1,0 +1,51 @@
+@import "theme.css";
+
+.container-trilha{
+    display:flex;
+    margin-left: 250px;
+    text-align: center;
+    justify-content: center;
+
+}
+.container-trilha h1{
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.trilha{
+    position:relative;
+    margin-top:50px;
+    }
+    
+    .trilha::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:0;
+    width:6px;
+    height:100%;
+    background:#243a5e;
+    transform:translateX(-50%);
+    }
+    
+    .nivel{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:#2c4ea3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:60px auto;
+    font-size:30px;
+    position:relative;
+    }
+    
+    .ativo{
+    background:#3b82f6;
+    }
+    
+    .bloqueado{
+    background:#374151;
+    }
