@@ -1,6 +1,6 @@
 package com.eniac.devevolution.controllers;
 
-import com.eniac.devevolution.dtos.StudentRequest;
+import com.eniac.devevolution.dtos.RegisterRequest;
 import com.eniac.devevolution.dtos.StudentResponse;
 import com.eniac.devevolution.repositories.StudentRepository;
 import com.eniac.devevolution.services.StudentService;
@@ -33,7 +33,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentResponse> create(@RequestBody @Valid StudentRequest request) {
+    public ResponseEntity<StudentResponse> create(@RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(studentService.create(request));
     }
 
@@ -48,7 +48,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StudentResponse> update(@PathVariable Long id, @RequestBody @Valid StudentRequest request) {
+    public ResponseEntity<StudentResponse> update(@PathVariable Long id, @RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.ok(studentService.update(id, request));
     }
 

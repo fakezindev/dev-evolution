@@ -1,6 +1,6 @@
 package com.eniac.devevolution.services;
 
-import com.eniac.devevolution.dtos.StudentRequest;
+import com.eniac.devevolution.dtos.RegisterRequest;
 import com.eniac.devevolution.dtos.StudentResponse;
 import com.eniac.devevolution.entities.Student;
 import com.eniac.devevolution.repositories.StudentRepository;
@@ -16,7 +16,7 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public StudentResponse create(StudentRequest request) {
+    public StudentResponse create(RegisterRequest request) {
         if (studentRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Já existe um aluno com este e-mail.");
         }
@@ -36,7 +36,7 @@ public class StudentService {
                 .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado."));
     }
 
-    public StudentResponse update(Long id, StudentRequest request) {
+    public StudentResponse update(Long id, RegisterRequest request) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Aluno não encontrado."));
 
@@ -55,11 +55,10 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    private Student mapToEntity(Student student, StudentRequest request) {
+    private Student mapToEntity(Student student, RegisterRequest request) {
         student.setUsername(request.username());
         student.setEmail(request.email());
-        student.setCurso(request.curso());
-        student.setDataNascimento(request.dataNascimento());
+        student.setCurso("Iniciante");
         return student;
     }
 
@@ -69,7 +68,9 @@ public class StudentService {
                 student.getUsername(),
                 student.getEmail(),
                 student.getCurso(),
-                student.getDataNascimento()
+                student.getDataNascimento(),
+                student.getXpTotal(),
+                student.getVidasAtuais()
         );
     }
 }

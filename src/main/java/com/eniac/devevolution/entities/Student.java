@@ -27,7 +27,7 @@ public class Student {
     @Column(nullable = false)
     private String curso;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate dataNascimento;
 
     @Column(name = "xp_total", nullable = false, columnDefinition = "integer default 0")
