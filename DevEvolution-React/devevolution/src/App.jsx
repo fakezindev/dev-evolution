@@ -13,10 +13,7 @@ import Perfil from "./pages/Perfil"
 import Ligas from "./pages/Ligas"
 import Licao1 from "./pages/Licao1"
 
-function PrivateRoute({ children }) {
-  const auth = localStorage.getItem("auth")
-  return auth ? children : <Navigate to="/login" />
-}
+import PrivateRoute from "./components/Privateroute"
 
 function Layout({ children }) {
   return (
@@ -78,9 +75,11 @@ function App() {
       <Route 
   path="/licao/:id"
   element={
-    <Layout>
-      <Licao1 />
-    </Layout>
+    <PrivateRoute>
+      <Layout>
+        <Licao1 />
+      </Layout>
+    </PrivateRoute>
   }
 />
     </Routes>
