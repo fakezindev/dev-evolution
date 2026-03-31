@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +60,7 @@ public class StudentController {
     }
 
     @GetMapping("/meu-perfil")
-    public ResponseEntity<StudentResponse> buscarMeuPerfil(org.springframework.security.core.Authentication authentication) {
+    public ResponseEntity<StudentResponse> buscarMeuPerfil(Authentication authentication) {
 
         // Pega o nome do usuário que está dentro do Token JWT
         String username = authentication.getName();

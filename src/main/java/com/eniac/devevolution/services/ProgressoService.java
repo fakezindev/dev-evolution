@@ -70,4 +70,44 @@ public class ProgressoService {
         // 5. Devolve o status fresquinho para o front-end atualizar as barrinhas
         return new ProgressoResponseDTO(mensagem, student.getXpTotal(), student.getVidasAtuais(), progresso.getConcluido());
     }
+
+    @Transactional
+    public void processarSubmissaoPrincipal(Long studentId, Long desafioId, boolean sucesso) {
+        Student student = studentRepository.findById(studentId).orElseThrow();
+
+        // 1. Bloqueio amigável: Não deixa fazer lição nova sem vida
+        if (student.getVidasAtuais() <= 0) {
+            throw new RuntimeException("Você está sem vidas! Faça um exercício de revisão para recuperar corações.");
+        }
+
+        if (sucesso) {
+            student.setXpTotal(student.getXpTotal() + 50);
+            // Salva o progresso...
+        } else {
+            student.setVidasAtuais(student.getVidasAtuais() - 1);
+            // Salva o estudante, mas NÃO apaga o progresso se chegar a zero!
+        }
+
+        studentRepository.save(student);
+    }
+
+    @Transactional
+    public void processarSubmissaoRecuperacao(Long studentId, boolean sucesso) {
+        Student student = studentRepository.findById(studentId).orElseThrow();
+
+        // O aluno só pode recuperar vida se tiver menos de 3 (o máximo)
+        if (student.getVidasAtuais() >= 3) {
+            throw new RuntimeException("Você já está com as vidas cheias!");
+        }
+
+        if (sucesso) {
+            // Se ele acertou o exercício de reforço, ganha 1 coração!
+            // (Opcional: você pode dar um pouquinho de XP aqui também, tipo 10 XP)
+            student.setVidasAtuais(student.getVidasAtuais() + 1);
+            student.setXpTotal(student.getXpTotal() + 10);
+
+            studentRepository.save(student);
+        }
+        // Se ele errar a recuperação, nada acontece (ele continua com 0 vidas até acertar).
+    }
 }

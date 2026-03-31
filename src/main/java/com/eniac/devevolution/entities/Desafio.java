@@ -36,4 +36,7 @@ public class Desafio {
     @ManyToOne
     @JoinColumn(name = "mundo_id", nullable = false)
     private Mundo mundo;
+
+    @Column(name = "topico")
+    private String topico;
 }
