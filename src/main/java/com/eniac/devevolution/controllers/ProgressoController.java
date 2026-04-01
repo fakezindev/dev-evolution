@@ -1,15 +1,17 @@
 package com.eniac.devevolution.controllers;
 
-import com.eniac.devevolution.dtos.ProgressoRequestDTO;
-import com.eniac.devevolution.dtos.ProgressoResponseDTO;
 import com.eniac.devevolution.dtos.RespostaDto;
-import com.eniac.devevolution.entities.Student;
-import com.eniac.devevolution.entities.User;
 import com.eniac.devevolution.services.ProgressoService;
+import com.eniac.devevolution.entities.Student;
+import com.eniac.devevolution.repositories.StudentRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/progresso")
@@ -18,33 +20,39 @@ public class ProgressoController {
     @Autowired
     private ProgressoService progressoService;
 
-    // 🎮 ROTA 1: Jogar a Trilha Principal (Lição 1, 2, etc)
+    @Autowired
+    private StudentRepository studentRepository;
+
+    // 🎮 ROTA 1: Jogar a Trilha Principal
     @PostMapping("/submeter")
-    public ResponseEntity<String> submeterDesafio(@RequestBody RespostaDto resposta, Authentication authentication) {
+    public ResponseEntity<Map<String, Boolean>> submeterDesafio(@RequestBody RespostaDto resposta, Authentication authentication) {
 
-        // Pega o usuário logado através do Token JWT
-        // (Ajuste o cast para a classe exata que o seu JwtAuthenticationFilter coloca no contexto)
-        User usuarioLogado = (User) authentication.getPrincipal();
-        Long studentId = usuarioLogado.getId();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String usernameLogado = userDetails.getUsername();
 
-        // Passa a bola para o Service fazer a mágica (dar XP ou tirar vida)
-        // Note o uso de resposta.desafioId() e resposta.sucesso() por causa do Record!
-        progressoService.processarSubmissaoPrincipal(studentId, resposta.desafioId(), resposta.sucesso());;
+        Student student = studentRepository.findByUsername(usernameLogado)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 
-        return ResponseEntity.ok("Progresso registrado com sucesso!");
+        // Guarda o resultado que veio do Service
+        boolean xpGanho = progressoService.processarSubmissaoPrincipal(student.getId(), resposta.desafioId(), resposta.sucesso());
+
+        // Manda um JSON bonitinho: { "xpGanho": true } ou { "xpGanho": false }
+        return ResponseEntity.ok(Map.of("xpGanho", xpGanho));
     }
 
-    // 💖 ROTA 2: Recuperar Vidas (Aulinha de Reforço)
+    // 💖 ROTA 2: Recuperar Vidas
     @PostMapping("/recuperar-vida")
     public ResponseEntity<String> recuperarVida(@RequestBody RespostaDto resposta, Authentication authentication) {
 
-        User usuarioLogado = (User) authentication.getPrincipal();
-        Long studentId = usuarioLogado.getId();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String usernameLogado = userDetails.getUsername();
 
-        // Passa a bola para o Service devolver o coração do aluno
-        progressoService.processarSubmissaoRecuperacao(studentId, resposta.sucesso());
+        // Trocamos o findByEmail pelo findByUsername aqui também!
+        Student student = studentRepository.findByUsername(usernameLogado)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o username: " + usernameLogado));
+
+        progressoService.processarSubmissaoRecuperacao(student.getId(), resposta.sucesso());
 
         return ResponseEntity.ok("Tentativa de recuperação processada!");
     }
-
 }

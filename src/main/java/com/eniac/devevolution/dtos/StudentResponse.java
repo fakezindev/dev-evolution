@@ -1,6 +1,7 @@
 package com.eniac.devevolution.dtos;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record StudentResponse(
         Long id,
@@ -9,6 +10,7 @@ public record StudentResponse(
         String curso,
         LocalDate dataNascimento,
         Integer xpTotal,
-        Integer vidasAtuais
+        Integer vidasAtuais,
+        List<Long> desafiosConcluidos
 ) {
 }

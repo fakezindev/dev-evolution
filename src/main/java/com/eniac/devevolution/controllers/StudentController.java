@@ -5,6 +5,8 @@ import com.eniac.devevolution.dtos.StudentResponse;
 import com.eniac.devevolution.repositories.StudentRepository;
 import com.eniac.devevolution.services.StudentService;
 import jakarta.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +71,14 @@ public class StudentController {
         var student = studentRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 
-        // Converte para o DTO atualizado e devolve
+        List<Long> desafiosConcluidos = new ArrayList<>();
+        if (student.getProgressos() != null) {
+            desafiosConcluidos = student.getProgressos().stream()
+                    .map(progresso -> progresso.getDesafio().getId())
+                    .toList();
+        }
+
+        // 2. Agora sim passamos a lista de Long para o DTO
         StudentResponse response = new StudentResponse(
                 student.getId(),
                 student.getUsername(),
@@ -77,7 +86,8 @@ public class StudentController {
                 student.getCurso(),
                 student.getDataNascimento(),
                 student.getXpTotal(),
-                student.getVidasAtuais()
+                student.getVidasAtuais(),
+                desafiosConcluidos // <-- Agora a tipagem está correta!
         );
 
         return ResponseEntity.ok(response);

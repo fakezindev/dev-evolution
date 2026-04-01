@@ -4,8 +4,11 @@ import com.eniac.devevolution.dtos.RegisterRequest;
 import com.eniac.devevolution.dtos.StudentResponse;
 import com.eniac.devevolution.entities.Student;
 import com.eniac.devevolution.repositories.StudentRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StudentService {
@@ -24,12 +27,15 @@ public class StudentService {
         return toResponse(studentRepository.save(student));
     }
 
+    @Transactional(readOnly = true)
     public List<StudentResponse> findAll() {
         return studentRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    // Adicionado @Transactional para o JPA conseguir ler a lista de progressos associada ao aluno
+    @Transactional(readOnly = true)
     public StudentResponse findById(Long id) {
         return studentRepository.findById(id)
                 .map(this::toResponse)
@@ -62,7 +68,18 @@ public class StudentService {
         return student;
     }
 
+    // 🚀 O METODO SUBSTITUÍDO: Agora ele extrai os IDs dos desafios e manda para o front!
     private StudentResponse toResponse(Student student) {
+
+        List<Long> desafiosConcluidos = new ArrayList<>();
+
+        // Verifica se o aluno tem progressos para evitar NullPointerException
+        if (student.getProgressos() != null) {
+            desafiosConcluidos = student.getProgressos().stream()
+                    .map(progresso -> progresso.getDesafio().getId()) // Pega só o ID!
+                    .toList();
+        }
+
         return new StudentResponse(
                 student.getId(),
                 student.getUsername(),
@@ -70,7 +87,8 @@ public class StudentService {
                 student.getCurso(),
                 student.getDataNascimento(),
                 student.getXpTotal(),
-                student.getVidasAtuais()
+                student.getVidasAtuais(),
+                desafiosConcluidos // <-- O React agradece!
         );
     }
 }

@@ -3,6 +3,7 @@ package com.eniac.devevolution.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -38,5 +39,6 @@ public class Student {
 
     // Relação 1:N - Um aluno tem vários progressos (um para cada desafio)
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<ProgressoAluno> progressos;
+    private List<ProgressoAluno> progressos = new ArrayList<>();
+
 }

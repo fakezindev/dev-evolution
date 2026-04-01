@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class ProgressoService {
@@ -72,23 +73,34 @@ public class ProgressoService {
     }
 
     @Transactional
-    public void processarSubmissaoPrincipal(Long studentId, Long desafioId, boolean sucesso) {
-        Student student = studentRepository.findById(studentId).orElseThrow();
+    // 1. Mudamos de 'void' para 'boolean'
+    public boolean processarSubmissaoPrincipal(Long studentId, Long desafioId, boolean sucesso) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
 
-        // 1. Bloqueio amigável: Não deixa fazer lição nova sem vida
-        if (student.getVidasAtuais() <= 0) {
-            throw new RuntimeException("Você está sem vidas! Faça um exercício de revisão para recuperar corações.");
-        }
+        boolean xpAdicionado = false; // Começa como falso
 
         if (sucesso) {
-            student.setXpTotal(student.getXpTotal() + 50);
-            // Salva o progresso...
+            Optional<ProgressoAluno> progressoExistente = progressoRepository.findByStudentIdAndDesafioId(student.getId(), desafioId);
+
+            if (progressoExistente.isEmpty()) {
+                student.setXpTotal(student.getXpTotal() + 50);
+                xpAdicionado = true; // Opa! Ganhou XP!
+
+                Desafio desafio = desafioRepository.findById(desafioId).orElseThrow();
+                ProgressoAluno novoProgresso = new ProgressoAluno();
+                novoProgresso.setStudent(student);
+                novoProgresso.setDesafio(desafio);
+                progressoRepository.save(novoProgresso);
+            }
         } else {
-            student.setVidasAtuais(student.getVidasAtuais() - 1);
-            // Salva o estudante, mas NÃO apaga o progresso se chegar a zero!
+            student.setVidasAtuais(Math.max(0, student.getVidasAtuais() - 1));
         }
 
         studentRepository.save(student);
+
+        // 2. Retorna a fofoca para o Controller
+        return xpAdicionado;
     }
 
     @Transactional
