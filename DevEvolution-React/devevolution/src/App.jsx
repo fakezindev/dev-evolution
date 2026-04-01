@@ -12,6 +12,7 @@ import LoginUser from "./pages/LoginUser"
 import Perfil from "./pages/Perfil"
 import Ligas from "./pages/Ligas"
 import Licao1 from "./pages/Licao1"
+import Licao2 from "./pages/Licao2"
 
 import PrivateRoute from "./components/Privateroute"
 
@@ -73,11 +74,21 @@ function App() {
       />
 
       <Route 
-  path="/licao/:id"
+  path="/licao/1"
   element={
     <PrivateRoute>
       <Layout>
         <Licao1 />
+      </Layout>
+    </PrivateRoute>
+  }
+/>
+<Route 
+  path="/licao/2"
+  element={
+    <PrivateRoute>
+      <Layout>
+        <Licao2 />
       </Layout>
     </PrivateRoute>
   }
