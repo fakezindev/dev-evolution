@@ -1,97 +1,104 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import "../styles/trilha.css"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/trilha.css";
 
 function Trilha() {
+  const navigate = useNavigate();
+  const [trilhas, setTrilhas] = useState([]);
+  const [desafiosConcluidos, setDesafiosConcluidos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    const carregarDadosDoBanco = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-  const niveisIniciais = [
-    { id: 1, nome: "Mundo das Variáveis", status: "ativo" },
-    { id: 2, nome: "Missão do Robô", status: "bloqueado" },
-    { id: 3, nome: "Loops", status: "bloqueado" },
-  ]
+      try {
+        // 1. Busca as Trilhas/Mundos do seu Spring Boot
+        const resTrilhas = await fetch("http://localhost:8080/api/trilhas");
+        const dataTrilhas = await resTrilhas.json();
 
-  const [niveis, setNiveis] = useState([])
+        // 2. Busca o Perfil para saber o que o Bruno já completou
+        const resPerfil = await fetch("http://localhost:8080/api/alunos/meu-perfil", {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const dataPerfil = await resPerfil.json();
 
- useEffect(() => {
+        setTrilhas(dataTrilhas);
+        setDesafiosConcluidos(dataPerfil.desafiosConcluidos || []);
+      } catch (error) {
+        console.error("Erro ao sincronizar com o servidor:", error);
+      } finally {
+        setCarregando(false);
+      }
+    };
 
-  const salvo = localStorage.getItem("progressoTrilha")
+    carregarDadosDoBanco();
+  }, [navigate]);
 
-  if (salvo) {
-    setNiveis(JSON.parse(salvo))
-  } else {
-    const iniciais = [
-      { id: 1, nome: "Mundo das Variáveis", status: "ativo" },
-      { id: 2, nome: "Missão do Robô", status: "bloqueado" },
-      { id: 3, nome: "Loops", status: "bloqueado" },
-    ]
+  // Lógica para descobrir qual é o próximo desafio (estrela)
+  const todosDesafiosIds = trilhas.flatMap(t => t.mundos.flatMap(m => m.desafios.map(d => d.id)));
+  const idProximoDesafio = todosDesafiosIds.find(id => !desafiosConcluidos.includes(id));
 
-    setNiveis(iniciais)
-    localStorage.setItem("progressoTrilha", JSON.stringify(iniciais))
-  }
+  const handleClick = (desafio, status) => {
+    if (status === "bloqueado") return;
+    // Navega para a rota que o LicaoManager vai tratar
+    navigate(`/licao/${desafio.id}`);
+  };
 
-}, [])
-
- useEffect(() => {
-
-  const progresso = JSON.parse(localStorage.getItem("progressoTrilha"))
-
-  if (!progresso) return
-
-  // só bloqueia se realmente for bloqueado
-  if (progresso[0].status === "bloqueado") {
-    navigate("/dashboard")
-  }
-
-}, [navigate])
-
-  const handleClick = (nivel) => {
-
-  if (nivel.status === "bloqueado") return
-
-  navigate(`/licao/${nivel.id}`)
-}
-
-if (!niveis || niveis.length === 0) {
-  return <p>Carregando trilha...</p>
-}
+  if (carregando) return <p>Carregando trilha...</p>;
 
   return (
     <div className="trilha-container">
+      {trilhas.map((trilha) => (
+        <div key={trilha.id}>
+          {/* Mantendo o seu H1 e Subtitle original */}
+          <h1>{trilha.nome}</h1>
+          
+          {trilha.mundos.map((mundo) => (
+            <div key={mundo.id}>
+              <p className="subtitle">{mundo.nome}</p>
 
-      <h1>Mundo 1</h1>
-      <p className="subtitle">Fundamentos da Programação</p>
+              <div className="trilha-vertical">
+                <div className="linha"></div>
 
-      <div className="trilha-vertical">
+                {mundo.desafios.map((desafio, index) => {
+                  const isConcluido = desafiosConcluidos.includes(desafio.id);
+                  const isAtual = desafio.id === idProximoDesafio;
+                  
+                  // Define o status exatamente como você tinha antes
+                  let status = "bloqueado";
+                  if (isConcluido) status = "feito";
+                  else if (isAtual || (desafiosConcluidos.length === 0 && index === 0)) status = "ativo";
 
-        <div className="linha"></div>
+                  return (
+                    <div
+                      key={desafio.id}
+                      // Mantendo suas classes left/right e status
+                      className={`nivel ${status} ${index % 2 === 0 ? "left" : "right"}`}
+                      onClick={() => handleClick(desafio, status)}
+                    >
+                      {/* Voltando para os seus Emojis originais */}
+                      <div className="circulo">
+                        {status === "feito" && "✅"}
+                        {status === "ativo" && "⭐"}
+                        {status === "bloqueado" && "🔒"}
+                      </div>
 
-        {niveis.map((nivel, index) => (
-          <div
-            key={nivel.id}
-            className={`nivel ${nivel.status} ${index % 2 === 0 ? "left" : "right"}`}
-            onClick={() => handleClick(nivel)}
-          >
-
-            <div className="circulo">
-              {nivel.status === "feito" && "✅"}
-              {nivel.status === "ativo" && "⭐"}
-              {nivel.status === "bloqueado" && "🔒"}
+                      <span>{desafio.titulo || desafio.nome}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-
-            <span>{nivel.nome}</span>
-
-          </div>
-        ))}
-
-      </div>
-
+          ))}
+        </div>
+      ))}
     </div>
-  )
-
-  
+  );
 }
 
-
-export default Trilha
+export default Trilha;

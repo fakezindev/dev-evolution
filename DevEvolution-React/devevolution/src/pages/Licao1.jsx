@@ -1,32 +1,16 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import "../styles/licao1.css"
+import "../styles/licao.css"
 import LoadingSpinner from "../components/LoadingSpinner"
 import FeedbackModal from "../components/FeedbackModal"
 
 function Licao1() {
+  const [codigo, setCodigo] = useState("")
+  const [resultado, setResultado] = useState("")
   const navigate = useNavigate()
-  const { id } = useParams() // Pega o ID do desafio da URL (ex: /desafio/1)
+  const { id } = useParams() // Pega o ID da URL
 
-  // ESTADOS DO JOGO
-  const [itens, setItens] = useState([
-    { id: 1, valor: "false", tipo: "boolean" },
-    { id: 2, valor: '"Maçã"', tipo: "string" },
-    { id: 3, valor: "42", tipo: "number" },
-    { id: 4, valor: "true", type: "boolean" }, // Corrigido para "tipo" abaixo se precisar, mas vamos manter o seu padrão
-    { id: 5, valor: "100", tipo: "number" },
-  ])
-
-  const [gavetas, setGavetas] = useState({
-    string: [],
-    number: [],
-    boolean: []
-  })
-
-  const [dragItem, setDragItem] = useState(null)
-  const [erroVisual, setErroVisual] = useState(false)
-
-  // ESTADOS DE FEEDBACK (O que estava faltando!)
+  // ⚙️ NOSSOS ESTADOS DE FEEDBACK (O Motor do Jogo)
   const [carregando, setCarregando] = useState(false)
   const [modal, setModal] = useState({
     isOpen: false,
@@ -44,41 +28,6 @@ function Licao1() {
     }
   }, [navigate])
 
-  // 🎯 DRAG START (Pega o item)
-  const handleDragStart = (item) => {
-    // Corrige inconsistência na sua lista (o id 4 estava com 'type' em vez de 'tipo')
-    const itemCorrigido = { ...item, tipo: item.tipo || item.type }
-    setDragItem(itemCorrigido)
-  }
-
-  // 🎯 DROP (Solta o item)
-  const handleDrop = async (tipoGaveta) => {
-    if (!dragItem) return
-
-    // ACERTOU A GAVETA!
-    if (dragItem.tipo === tipoGaveta) {
-      setGavetas(prev => ({
-        ...prev,
-        [tipoGaveta]: [...prev[tipoGaveta], dragItem]
-      }))
-      setItens(prev => prev.filter(i => i.id !== dragItem.id))
-      setDragItem(null)
-
-    } else {
-      // ERROU A GAVETA! (Hora de perder uma vida no Backend)
-      setErroVisual(true)
-      setTimeout(() => setErroVisual(false), 400)
-      setDragItem(null)
-      
-      await enviarProgressoParaBackend(false) // successo: false
-    }
-  }
-
-  // ✅ FINALIZAR (Botão aparece quando itens acabam)
-  const finalizarLicao = async () => {
-    await enviarProgressoParaBackend(true) // successo: true
-  }
-
   // 📡 COMUNICAÇÃO COM O SPRING BOOT
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
@@ -92,7 +41,7 @@ function Licao1() {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id), // ID pego da URL
+          desafioId: parseInt(id) || 1, // Manda o ID 1 para o Java
           sucesso: sucesso
         })
       })
@@ -101,27 +50,26 @@ function Licao1() {
         throw new Error("Erro ao registrar o progresso")
       }
 
+      const data = await response.json()
       setCarregando(false)
 
-      // Configura o Modal dependendo se ele acertou a lição ou errou a gaveta
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: "Resposta Correta!",
-          mensagem: "+50 XP! Você está mandando bem, continue assim.",
-          acaoFechar: () => navigate("/dashboard") // Volta pro mapa quando fechar
+          titulo: data.xpGanho ? "✅ Parabéns! Missão Concluída!" : "Revisão Concluída!",
+          mensagem: data.xpGanho ? "+50 XP adicionados! Você está mandando bem." : "Conteúdo revisado com sucesso.",
+          acaoFechar: () => navigate("/dashboard")
         })
       } else {
         setModal({
           isOpen: true,
           tipo: "erro",
-          titulo: "Ops, gaveta errada!",
-          mensagem: "Você perdeu 1 coração (Vida). Preste mais atenção nos tipos!",
-          acaoFechar: () => setModal({ ...modal, isOpen: false }) // Só fecha e deixa ele tentar de novo
+          titulo: "❌ Código incorreto",
+          mensagem: "Você perdeu 1 coração (Vida). Dica: Lembre-se de colocar o texto entre aspas dentro do console.log!",
+          acaoFechar: () => setModal({ ...modal, isOpen: false })
         })
       }
-
     } catch (error) {
       console.error(error)
       setCarregando(false)
@@ -129,13 +77,30 @@ function Licao1() {
     }
   }
 
-  // O RETORNO DO JSX (Os modais devem ficar AQUI DENTRO)
+  // 🎯 A LÓGICA DE VERIFICAÇÃO INTEGRADA
+  const verificar = async () => {
+    // Remove espaços em branco para facilitar a validação e evitar erros por bobeira
+    const codigoLimpo = codigo.replace(/\s+/g, '') 
+    
+    // Valida se ele usou aspas duplas, simples ou se esqueceu as aspas
+    if (
+      codigoLimpo.includes('console.log("HelloWorld")') || 
+      codigoLimpo.includes("console.log('HelloWorld')") ||
+      codigoLimpo.includes("console.log(HelloWorld)") 
+    ) {
+      setResultado("Validando resposta no servidor...")
+      await enviarProgressoParaBackend(true)
+    } else {
+      setResultado("❌ Tente novamente")
+      await enviarProgressoParaBackend(false)
+    }
+  }
+
   return (
     <div className="licao-container">
-      
-      {/* Nossos componentes visuais de cima */}
+
+      {/* 🔮 NOSSOS MODAIS E SPINNERS INJETADOS AQUI */}
       {carregando && <LoadingSpinner mensagem="Salvando progresso..." />}
-      
       <FeedbackModal 
         isOpen={modal.isOpen} 
         tipo={modal.tipo} 
@@ -144,79 +109,50 @@ function Licao1() {
         onClose={modal.acaoFechar} 
       />
 
-      <h1>Organize a Bagunça!</h1>
+      <h1>Missão 1: Hello World</h1>
       <p className="subtitle">
-        Arraste os dados espalhados para as gavetas corretas antes de começarmos a programar.
+        Escreva um código que exiba <strong>Hello World</strong>
       </p>
 
       <div className="licao-grid">
 
-        {/* ESQUERDA (Itens soltos) */}
+        {/* ESQUERDA */}
         <div className="dados-box">
-          <h3>DADOS SOLTOS</h3>
-          <div className="dados-area">
-            {itens.map(item => (
-              <div
-                key={item.id}
-                className="item"
-                draggable
-                onDragStart={() => handleDragStart(item)}
-              >
-                {item.valor}
-              </div>
-            ))}
-          </div>
+          <h3>SEU CÓDIGO</h3>
+
+          <textarea
+            className="editor"
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            placeholder='Ex: console.log("Hello World")'
+          />
+
+          <button className="btn-finalizar" onClick={verificar}>
+            Executar
+          </button>
+
+          <p className="resultado">{resultado}</p>
         </div>
 
-        {/* DIREITA (Gavetas) */}
+        {/* DIREITA */}
         <div className="gavetas-box">
 
-          {/* STRING */}
-          <div
-            className={`gaveta string ${erroVisual ? "erro" : ""}`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => handleDrop("string")}
-          >
-            <span className="label">Texto (String)</span>
-            {gavetas.string.map(i => (
-              <div key={i.id} className="item small">{i.valor}</div>
-            ))}
-          </div>
+          <div className="gaveta string">
+            <span className="label">Objetivo</span>
 
-          {/* NUMBER */}
-          <div
-            className={`gaveta number ${erroVisual ? "erro" : ""}`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => handleDrop("number")}
-          >
-            <span className="label">Número (Number)</span>
-            {gavetas.number.map(i => (
-              <div key={i.id} className="item small">{i.valor}</div>
-            ))}
-          </div>
+            <p style={{ color: "#fff" }}>
+              Seu código deve conter:
+            </p>
 
-          {/* BOOLEAN */}
-          <div
-            className={`gaveta boolean ${erroVisual ? "erro" : ""}`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => handleDrop("boolean")}
-          >
-            <span className="label">Verdadeiro/Falso (Boolean)</span>
-            {gavetas.boolean.map(i => (
-              <div key={i.id} className="item small">{i.valor}</div>
-            ))}
+            <div className="item small">
+              Hello World
+            </div>
+
           </div>
 
         </div>
 
       </div>
-
-      {/* BOTÃO FINAL (Só aparece quando organiza tudo) */}
-      {itens.length === 0 && (
-        <button className="btn-finalizar" onClick={finalizarLicao}>
-          Finalizar Desafio
-        </button>
-      )}
 
     </div>
   )
