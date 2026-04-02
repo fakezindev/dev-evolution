@@ -92,25 +92,26 @@ function Licao2() {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id), // ID pego da URL
+          desafioId: parseInt(id), // Usa o ID da URL
           sucesso: sucesso
         })
       })
 
-      if (!response.ok) {
-        throw new Error("Erro ao registrar o progresso")
-      }
+      if (!response.ok) throw new Error("Erro ao registrar o progresso")
+
+      // ISSO ESTAVA FALTANDO NO COMMIT DELE:
+      const data = await response.json() 
 
       setCarregando(false)
 
-      // Configura o Modal dependendo se ele acertou a lição ou errou a gaveta
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: "Resposta Correta!",
-          mensagem: "+50 XP! Você está mandando bem, continue assim.",
-          acaoFechar: () => navigate("/dashboard") // Volta pro mapa quando fechar
+          // USA O DATA.XPGANHO PARA SABER QUAL MENSAGEM MOSTRAR
+          titulo: data.xpGanho ? "Resposta Correta!" : "Revisão Concluída!",
+          mensagem: data.xpGanho ? "+50 XP! Você está mandando bem." : "Conteúdo revisado com sucesso.",
+          acaoFechar: () => navigate("/dashboard") 
         })
       } else {
         setModal({
@@ -118,11 +119,11 @@ function Licao2() {
           tipo: "erro",
           titulo: "Ops, gaveta errada!",
           mensagem: "Você perdeu 1 coração (Vida). Preste mais atenção nos tipos!",
-          acaoFechar: () => setModal({ ...modal, isOpen: false }) // Só fecha e deixa ele tentar de novo
+          acaoFechar: () => setModal({ ...modal, isOpen: false }) 
         })
       }
-
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
       setCarregando(false)
       alert("Erro de conexão com o servidor.")

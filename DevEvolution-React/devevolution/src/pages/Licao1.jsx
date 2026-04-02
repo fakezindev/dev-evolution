@@ -1,48 +1,113 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import "../styles/licao.css"
-import { useNavigate } from "react-router-dom"
-
+import LoadingSpinner from "../components/LoadingSpinner"
+import FeedbackModal from "../components/FeedbackModal"
 
 function Licao1() {
   const [codigo, setCodigo] = useState("")
   const [resultado, setResultado] = useState("")
-  const xp = localStorage.getItem("xp") || 0
   const navigate = useNavigate()
-  const [concluida, setConcluida] = useState(false)
+  const { id } = useParams() // Pega o ID da URL
 
-  const verificar = () => {
-    if (concluida) return // 🚫 evita repetir
-  
-    if (codigo.includes("console.log(Hello World)")) {
-      setResultado("✅ Parabéns! Missão concluída!")
-      setConcluida(true)
-  
-      // 🔓 LIBERA FASE 2
-      const progresso = JSON.parse(localStorage.getItem("progressoTrilha"))
-  
-      if (progresso) {
-        progresso[0].status = "feito"
-        progresso[1].status = "ativo"
-  
-        localStorage.setItem("progressoTrilha", JSON.stringify(progresso))
+  // ⚙️ NOSSOS ESTADOS DE FEEDBACK (O Motor do Jogo)
+  const [carregando, setCarregando] = useState(false)
+  const [modal, setModal] = useState({
+    isOpen: false,
+    tipo: "",
+    titulo: "",
+    mensagem: "",
+    acaoFechar: () => {}
+  })
+
+  // 🚫 BLOQUEIO DE ACESSO DE SEGURANÇA
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      navigate("/login")
+    }
+  }, [navigate])
+
+  // 📡 COMUNICAÇÃO COM O SPRING BOOT
+  const enviarProgressoParaBackend = async (sucesso) => {
+    setCarregando(true)
+    const token = localStorage.getItem("token")
+
+    try {
+      const response = await fetch("http://localhost:8080/api/progresso/submeter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          desafioId: parseInt(id) || 1, // Manda o ID 1 para o Java
+          sucesso: sucesso
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error("Erro ao registrar o progresso")
       }
-  
-      // 💰 GANHA XP
-      const xpAtual = Number(localStorage.getItem("xp")) || 0
-      localStorage.setItem("xp", xpAtual + 50)
-  
-      // 🔁 VOLTA PRO MAPA
-      setTimeout(() => {
-        navigate("/dashboard")
-      }, 500)
-  
+
+      const data = await response.json()
+      setCarregando(false)
+
+      if (sucesso) {
+        setModal({
+          isOpen: true,
+          tipo: "sucesso",
+          titulo: data.xpGanho ? "✅ Parabéns! Missão Concluída!" : "Revisão Concluída!",
+          mensagem: data.xpGanho ? "+50 XP adicionados! Você está mandando bem." : "Conteúdo revisado com sucesso.",
+          acaoFechar: () => navigate("/dashboard")
+        })
+      } else {
+        setModal({
+          isOpen: true,
+          tipo: "erro",
+          titulo: "❌ Código incorreto",
+          mensagem: "Você perdeu 1 coração (Vida). Dica: Lembre-se de colocar o texto entre aspas dentro do console.log!",
+          acaoFechar: () => setModal({ ...modal, isOpen: false })
+        })
+      }
+    } catch (error) {
+      console.error(error)
+      setCarregando(false)
+      alert("Erro de conexão com o servidor.")
+    }
+  }
+
+  // 🎯 A LÓGICA DE VERIFICAÇÃO INTEGRADA
+  const verificar = async () => {
+    // Remove espaços em branco para facilitar a validação e evitar erros por bobeira
+    const codigoLimpo = codigo.replace(/\s+/g, '') 
+    
+    // Valida se ele usou aspas duplas, simples ou se esqueceu as aspas
+    if (
+      codigoLimpo.includes('console.log("HelloWorld")') || 
+      codigoLimpo.includes("console.log('HelloWorld')") ||
+      codigoLimpo.includes("console.log(HelloWorld)") 
+    ) {
+      setResultado("Validando resposta no servidor...")
+      await enviarProgressoParaBackend(true)
     } else {
       setResultado("❌ Tente novamente")
+      await enviarProgressoParaBackend(false)
     }
   }
 
   return (
     <div className="licao-container">
+
+      {/* 🔮 NOSSOS MODAIS E SPINNERS INJETADOS AQUI */}
+      {carregando && <LoadingSpinner mensagem="Salvando progresso..." />}
+      <FeedbackModal 
+        isOpen={modal.isOpen} 
+        tipo={modal.tipo} 
+        titulo={modal.titulo} 
+        mensagem={modal.mensagem}
+        onClose={modal.acaoFechar} 
+      />
 
       <h1>Missão 1: Hello World</h1>
       <p className="subtitle">
