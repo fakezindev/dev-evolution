@@ -88,3 +88,19 @@
     transition: 0.2s;
     scale:1.05;
   }
+  .reset{
+  position: relative;
+  left: 700px;
+  padding: 5px;
+  background-color: rgb(238, 255, 0);
+  border-radius: 5px;
+  transition: 0.6s;
+  box-shadow: 1px 1px 1px rgb(255, 255, 255);
+
+  }
+  .reset:hover{
+    background-color: rgb(255, 0, 0);
+    color: white;
+    transition: 0.6s;
+    scale:1.1;
+  }

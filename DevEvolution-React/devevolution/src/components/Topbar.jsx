@@ -65,7 +65,7 @@ function Topbar() {
         </li>
 
         <li>
-          <button onClick={handleLogout} style={{ padding: '8px 15px', backgroundColor: '#ff6b81', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+          <button className="logout" onClick={handleLogout} >
         Sair
       </button>
         </li>
