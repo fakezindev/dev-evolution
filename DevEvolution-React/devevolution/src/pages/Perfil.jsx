@@ -106,6 +106,12 @@ function Perfil() {
             {usuario.email} • {usuario.curso}
           </h3>
         
+          <button className="reset"onClick={() => {
+          localStorage.clear()
+          window.location.reload()
+          }}>
+            Resetar Trilha
+          </button>
         </div>
       </div>
 

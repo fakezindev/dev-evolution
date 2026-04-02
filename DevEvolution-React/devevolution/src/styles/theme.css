@@ -203,3 +203,17 @@ transition: 0.5s;
   background-color: var(--xp-background);
   color: var(--xp-color);
 }
+.logout{
+  padding: 8px 15px;
+   background-color: #ff6b81;
+    color: white;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+     transition: 0.2s;
+}
+.logout:hover{
+  background-color: #ff4757;
+  transition: 0.2s;
+  scale: 1.05;
+}
