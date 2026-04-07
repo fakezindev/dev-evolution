@@ -1,5 +1,6 @@
 package com.eniac.devevolution.services;
 
+import com.eniac.devevolution.dtos.RankingDTO;
 import com.eniac.devevolution.dtos.RegisterRequest;
 import com.eniac.devevolution.dtos.StudentResponse;
 import com.eniac.devevolution.entities.Student;
@@ -7,6 +8,8 @@ import com.eniac.devevolution.repositories.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,5 +93,37 @@ public class StudentService {
                 student.getVidasAtuais(),
                 desafiosConcluidos // <-- O React agradece!
         );
+    }
+
+    // Adicione este metodo no seu StudentService
+    @Transactional
+    public void atualizarFotoPerfil(String usernameLogado, String novaFotoBase64) {
+        Student student = studentRepository.findByUsername(usernameLogado)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        // Atualiza a foto e salva
+        student.setFotoPerfil(novaFotoBase64);
+        studentRepository.save(student);
+    }
+
+    public List<RankingDTO> obterRankingGeral() {
+        List<Student> alunosOrdenados = studentRepository.findAllByOrderByXpTotalDesc();
+
+        return alunosOrdenados.stream()
+                .map(aluno -> new RankingDTO(
+                        aluno.getId(),
+                        aluno.getUsername(),
+                        aluno.getXpTotal(),
+                        aluno.getFotoPerfil(),
+                        calcularLiga(aluno.getXpTotal())// Pegando a foto do banco
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private String calcularLiga(int xp) {
+        if (xp < 150) return "Bronze";
+        if (xp < 300) return "Prata";
+        if (xp < 500) return "Ouro";
+        return "Diamante";
     }
 }

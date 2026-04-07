@@ -1,5 +1,7 @@
 package com.eniac.devevolution.controllers;
 
+import com.eniac.devevolution.dtos.FotoRequest;
+import com.eniac.devevolution.dtos.RankingDTO;
 import com.eniac.devevolution.dtos.RegisterRequest;
 import com.eniac.devevolution.dtos.StudentResponse;
 import com.eniac.devevolution.repositories.StudentRepository;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +51,26 @@ public class StudentController {
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.findById(id));
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<RankingDTO>> getRanking() {
+        List<RankingDTO> ranking = studentService.obterRankingGeral();
+        return ResponseEntity.ok(ranking);
+    }
+
+    @PutMapping("/atualizar-foto")
+    public ResponseEntity<Void> atualizarFoto(@RequestBody FotoRequest request, Authentication authentication) {
+
+        // 1. Pega o nome do usuário "dono" do Token JWT
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String usernameLogado = userDetails.getUsername();
+
+        // 2. Manda o service fazer o trabalho sujo
+        studentService.atualizarFotoPerfil(usernameLogado, request.fotoPerfil());
+
+        // 3. Retorna sucesso (200 OK) sem precisar devolver corpo
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")

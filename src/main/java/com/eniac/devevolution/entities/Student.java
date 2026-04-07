@@ -28,6 +28,9 @@ public class Student {
     @Column(nullable = false)
     private String curso;
 
+    @Column(columnDefinition = "TEXT")
+    private String fotoPerfil;
+
     @Column
     private LocalDate dataNascimento;
 
