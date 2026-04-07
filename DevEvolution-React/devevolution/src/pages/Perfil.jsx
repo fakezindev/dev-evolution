@@ -8,10 +8,12 @@ function Perfil() {
   const [foto, setFoto] = useState(null)
   const [carregando, setCarregando] = useState(true)
 
+  // 🖼️ URL padrão para "Sem foto" (Avatar genérico e elegante)
+  const FOTO_DEFAULT = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+
   useEffect(() => {
     const token = localStorage.getItem("token")
   
-    // Se não tem a chave do castelo, chuta pro login
     if (!token) {
       navigate("/login")
       return
@@ -32,40 +34,58 @@ function Perfil() {
         }
 
         const data = await response.json()
-        setUsuario(data) // Salva os dados do Spring Boot no estado do React
+        setUsuario(data) 
+        
+        // 🧠 Lógica inteligente: Puxa a foto do Banco primeiro. Se não tiver, tenta o LocalStorage.
+        if (data.fotoPerfil) {
+          setFoto(data.fotoPerfil)
+        } else {
+          const fotoSalva = localStorage.getItem("fotoPerfil")
+          if (fotoSalva) setFoto(fotoSalva)
+        }
 
       } catch (error) {
         console.error("Erro ao carregar o perfil:", error)
-        logout() // Se deu erro de segurança, limpa tudo e desloga
+        logout() 
       } finally {
         setCarregando(false)
       }
     }
 
     carregarDadosDoBanco()
-  
-    // Mantém a sua lógica inteligente de salvar a foto localmente
-    const fotoSalva = localStorage.getItem("fotoPerfil")
-    if (fotoSalva) {
-      setFoto(fotoSalva)
-    }
-  
   }, [navigate])
 
-  const handleFoto = (e) => {
+  const handleFoto = async (e) => {
     const file = e.target.files[0]
     if (!file) return
   
     const reader = new FileReader()
-    reader.onloadend = () => {
-      setFoto(reader.result)
-      localStorage.setItem("fotoPerfil", reader.result)
+    reader.onloadend = async () => {
+      const base64String = reader.result
+      
+      // 1. Atualiza visualmente na hora para o usuário
+      setFoto(base64String)
+      localStorage.setItem("fotoPerfil", base64String) // Backup local
+
+      // 2. Envia a String gigante para o Java guardar no Banco de Dados!
+      try {
+        await fetch("http://localhost:8080/api/alunos/atualizar-foto", {
+          method: "PUT", // ou PATCH, dependendo de como você criar a rota
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          },
+          // Mandamos um JSON com o campo que o seu DTO/Entidade espera
+          body: JSON.stringify({ fotoPerfil: base64String }) 
+        })
+      } catch (error) {
+        console.error("Erro ao salvar foto no backend:", error)
+      }
     }
     reader.readAsDataURL(file)
   }
 
   const logout = () => {
-    // Atualizado para remover as chaves corretas do novo sistema
     localStorage.removeItem("token")
     localStorage.removeItem("auth")
     navigate("/login")
@@ -86,8 +106,9 @@ function Perfil() {
         <label className="perfil-avatar-box">
           <img
             className="perfil-avatar"
-            src={foto || "/images/avatar.png"}
-            alt="avatar"
+            // Se tiver 'foto' usa ela, senão exibe o bonequinho cinza padrão
+            src={foto || FOTO_DEFAULT}
+            alt="avatar do usuario"
           />
           <input
             type="file"
@@ -98,17 +119,15 @@ function Perfil() {
         </label>
 
         <div className="perfil-info">
-          {/* Nome oficial vindo do banco */}
           <h1>{usuario.username}</h1>
 
           <h3>
-            {/* Trocamos a idade (que tiramos do cadastro) pelo Curso/Título do aluno */}
-            {usuario.email} • {usuario.curso}
+            {usuario.email} • {usuario.curso || "Software Engineering"}
           </h3>
         
-          <button className="reset"onClick={() => {
-          localStorage.clear()
-          window.location.reload()
+          <button className="reset" onClick={() => {
+             localStorage.clear()
+             window.location.reload()
           }}>
             Resetar Trilha
           </button>
@@ -126,12 +145,10 @@ function Perfil() {
 
         <div className="stat-card xp">
           <i className="fa-solid fa-bolt"></i>
-          {/* XP puxado direto do banco */}
           <h3>{usuario.xpTotal}</h3>
           <p>XP Total</p>
         </div>
 
-        {/* Como ainda não temos Gemas e Ligas no Back, deixei estático para manter seu visual */}
         <div className="stat-card diamond">
           <i className="fa-solid fa-gem"></i>
           <h3>450</h3>
@@ -143,7 +160,6 @@ function Perfil() {
           <h3>Prata</h3>
           <p>Liga</p>
         </div>
-
       </div>
     </div>
   )

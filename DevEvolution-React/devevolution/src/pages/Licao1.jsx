@@ -6,49 +6,37 @@ import FeedbackModal from "../components/FeedbackModal"
 
 function Licao1() {
   const [codigo, setCodigo] = useState("")
-  const [resultado, setResultado] = useState("")
+  const [saida, setSaida] = useState("") // Novo estado para o terminal!
   const navigate = useNavigate()
-  const { id } = useParams() // Pega o ID da URL
+  const { id } = useParams()
 
-  // ⚙️ NOSSOS ESTADOS DE FEEDBACK (O Motor do Jogo)
   const [carregando, setCarregando] = useState(false)
   const [modal, setModal] = useState({
-    isOpen: false,
-    tipo: "",
-    titulo: "",
-    mensagem: "",
-    acaoFechar: () => {}
+    isOpen: false, tipo: "", titulo: "", mensagem: "", acaoFechar: () => {}
   })
 
-  // 🚫 BLOQUEIO DE ACESSO DE SEGURANÇA
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (!token) {
+    if (!localStorage.getItem("token")) {
       navigate("/login")
     }
   }, [navigate])
 
-  // 📡 COMUNICAÇÃO COM O SPRING BOOT
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
-    const token = localStorage.getItem("token")
-
     try {
       const response = await fetch("http://localhost:8080/api/progresso/submeter", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 1, // Manda o ID 1 para o Java
+          desafioId: parseInt(id) || 1,
           sucesso: sucesso
         })
       })
 
-      if (!response.ok) {
-        throw new Error("Erro ao registrar o progresso")
-      }
+      if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
       const data = await response.json()
       setCarregando(false)
@@ -57,16 +45,16 @@ function Licao1() {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: data.xpGanho ? "✅ Parabéns! Missão Concluída!" : "Revisão Concluída!",
-          mensagem: data.xpGanho ? "+50 XP adicionados! Você está mandando bem." : "Conteúdo revisado com sucesso.",
+          titulo: data.xpGanho ? "✅ Missão Concluída!" : "Revisão Concluída!",
+          mensagem: data.xpGanho ? "+50 XP adicionados!" : "Conteúdo revisado com sucesso.",
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
         setModal({
           isOpen: true,
           tipo: "erro",
-          titulo: "❌ Código incorreto",
-          mensagem: "Você perdeu 1 coração (Vida). Dica: Lembre-se de colocar o texto entre aspas dentro do console.log!",
+          titulo: "❌ Código Incorreto",
+          mensagem: "Você perdeu 1 coração (Vida). Verifique a sintaxe do console.log.",
           acaoFechar: () => setModal({ ...modal, isOpen: false })
         })
       }
@@ -77,83 +65,89 @@ function Licao1() {
     }
   }
 
-  // 🎯 A LÓGICA DE VERIFICAÇÃO INTEGRADA
   const verificar = async () => {
-    // Remove espaços em branco para facilitar a validação e evitar erros por bobeira
-    const codigoLimpo = codigo.replace(/\s+/g, '') 
+    if (!codigo.trim()) {
+      setSaida("Erro: O editor está vazio.")
+      return
+    }
+
+    const codigoLimpo = codigo.replace(/\s+/g, '')
     
-    // Valida se ele usou aspas duplas, simples ou se esqueceu as aspas
-    if (
-      codigoLimpo.includes('console.log("HelloWorld")') || 
-      codigoLimpo.includes("console.log('HelloWorld')") ||
-      codigoLimpo.includes("console.log(HelloWorld)") 
-    ) {
-      setResultado("Validando resposta no servidor...")
+    // Aceita aspas simples ou duplas, Hello World ou Olá Mundo
+    const acertou = 
+      codigoLimpo.includes('console.log("Olá,Mundo!")') || 
+      codigoLimpo.includes("console.log('Olá,Mundo!')") ||
+      codigoLimpo.includes('console.log("HelloWorld")') ||
+      codigoLimpo.includes("console.log('HelloWorld')")
+
+    if (acertou) {
+      // Simula o texto aparecendo no console antes de chamar o Java
+      setSaida("Olá, Mundo!") 
       await enviarProgressoParaBackend(true)
     } else {
-      setResultado("❌ Tente novamente")
+      setSaida("ReferenceError: syntax error ou mensagem incorreta.")
       await enviarProgressoParaBackend(false)
     }
   }
 
+  const resetar = () => {
+    setCodigo("")
+    setSaida("")
+  }
+
   return (
-    <div className="licao-container">
+    <div className="ide-container">
+      {carregando && <LoadingSpinner mensagem="Validando..." />}
+      <FeedbackModal {...modal} onClose={modal.acaoFechar} />
 
-      {/* 🔮 NOSSOS MODAIS E SPINNERS INJETADOS AQUI */}
-      {carregando && <LoadingSpinner mensagem="Salvando progresso..." />}
-      <FeedbackModal 
-        isOpen={modal.isOpen} 
-        tipo={modal.tipo} 
-        titulo={modal.titulo} 
-        mensagem={modal.mensagem}
-        onClose={modal.acaoFechar} 
-      />
-
-      <h1>Missão 1: Hello World</h1>
-      <p className="subtitle">
-        Escreva um código que exiba <strong>Hello World</strong>
-      </p>
-
-      <div className="licao-grid">
-
-        {/* ESQUERDA */}
-        <div className="dados-box">
-          <h3>SEU CÓDIGO</h3>
-
-          <textarea
-            className="editor"
-            value={codigo}
-            onChange={(e) => setCodigo(e.target.value)}
-            placeholder='Ex: console.log("Hello World")'
-          />
-
-          <button className="btn-finalizar" onClick={verificar}>
-            Executar
-          </button>
-
-          <p className="resultado">{resultado}</p>
+      {/* PAINEL ESQUERDO: INSTRUÇÕES */}
+      <div className="ide-sidebar">
+        <div className="ide-title">
+          <i className="fa-regular fa-lightbulb" style={{ color: '#4da6ff', fontSize: '20px' }}></i>
+          <h2>Hello World</h2>
         </div>
 
-        {/* DIREITA */}
-        <div className="gavetas-box">
+        <div className="ide-instruction-box">
+          <p>Use a função <strong>console.log("Olá, Mundo!")</strong> para imprimir uma mensagem na tela.</p>
+        </div>
+      </div>
 
-          <div className="gaveta string">
-            <span className="label">Objetivo</span>
-
-            <p style={{ color: "#fff" }}>
-              Seu código deve conter:
-            </p>
-
-            <div className="item small">
-              Hello World
-            </div>
-
+      {/* PAINEL DIREITO: SIMULADOR E EDITOR */}
+      <div className="ide-main">
+        
+        {/* TOPO: SAÍDA DO SIMULADOR */}
+        <div className="ide-output-panel">
+          <div className="ide-panel-header">
+            <i className="fa-solid fa-desktop"></i> SAÍDA DO SIMULADOR
           </div>
+          <div className="ide-terminal">
+            <span className="prompt">&gt;</span> {saida}
+          </div>
+        </div>
 
+        {/* BASE: EDITOR DE CÓDIGO */}
+        <div className="ide-editor-panel">
+          <div className="ide-panel-header">
+            <i className="fa-solid fa-code"></i> EDITOR DE CÓDIGO
+          </div>
+          
+          <textarea
+            className="ide-textarea"
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            placeholder="// Digite seu código abaixo:"
+            spellCheck="false"
+          />
+
+          <div className="ide-actions">
+            <button className="btn-ide-reset" onClick={resetar}>Resetar</button>
+            <button className="btn-ide-executar" onClick={verificar}>
+              <i className="fa-solid fa-play"></i> EXECUTAR
+            </button>
+          </div>
         </div>
 
       </div>
-
     </div>
   )
 }
