@@ -1,75 +1,91 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import "../styles/topbar.css"
 
 function Topbar() {
   const navigate = useNavigate()
-  
-  // Começamos com os valores zerados enquanto a API responde
-  const [perfil, setPerfil] = useState({
-    vidasAtuais: 0,
-    xpTotal: 0
-  })
+  const [usuario, setUsuario] = useState(null)
 
   useEffect(() => {
-    const carregarPerfil = async () => {
+    // 1. Criamos a função que busca os dados atualizados
+    const carregarDados = () => {
       const token = localStorage.getItem("token")
-
-      // Se por algum motivo não tiver token, nem tenta fazer a requisição
-      if (!token) return 
-
-      try {
-        const response = await fetch("http://localhost:8080/api/alunos/meu-perfil", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // Apresentando o crachá pro Spring Security
-          }
+      if (token) {
+        fetch("http://localhost:8080/api/alunos/meu-perfil", {
+          headers: { "Authorization": `Bearer ${token}` }
         })
-
-        if (!response.ok) {
-          throw new Error("Sessão expirada ou token inválido")
-        }
-
-        const data = await response.json()
-        setPerfil(data) // Sucesso! Atualiza a Topbar com os dados reais
-
-      } catch (error) {
-        console.error("Falha ao buscar os dados do perfil:", error)
-        // Se deu ruim (ex: token expirou), limpa tudo e chuta pro login
-        localStorage.removeItem("token")
-        localStorage.removeItem("auth")
-        navigate("/login")
+        .then(res => res.json())
+        .then(data => setUsuario(data))
+        .catch(err => console.error(err))
       }
     }
 
-    carregarPerfil()
-  }, [navigate])
+    // 2. Chama a função logo que a tela carrega (comportamento normal)
+    carregarDados()
 
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("auth")
+    // 3. Fica com o "ouvido colado" esperando o grito das Lições
+    window.addEventListener('atualizarPerfil', carregarDados)
+
+    // 4. Limpeza de segurança quando o componente for desmontado
+    return () => window.removeEventListener('atualizarPerfil', carregarDados)
+  }, [])
+
+  const logout = () => {
+    localStorage.clear()
     navigate("/login")
   }
 
+  // Calculadora de Ligas interna do Front
+  const obterLiga = (xp) => {
+    if (xp < 150) return { nome: "Bronze", cor: "#cd7f32", icone: "fa-medal" }
+    if (xp < 300) return { nome: "Prata", cor: "#c0c0c0", icone: "fa-shield" }
+    if (xp < 500) return { nome: "Ouro", cor: "#ffd700", icone: "fa-trophy" }
+    return { nome: "Diamante", cor: "#00d2ff", icone: "fa-gem" }
+  }
+
+  const ligaInfo = usuario ? obterLiga(usuario.xpTotal) : { nome: "...", cor: "#fff", icone: "fa-star" }
+
   return (
-    <div className="top-sidebar">
-      <ul>
-        {/* Substituí o fogo por coração (Vidas), mas pode voltar pro fogo se preferir! */}
-        <li className="frequency" title="Suas vidas atuais">
-          ❤️ {perfil.vidasAtuais}
-        </li>
+    <div className="topbar-container">
+      <div className="topbar-content">
+        <div className="topbar-left">
+          {/* Espaço para logo ou menu hamburger, se precisar futuramente */}
+        </div>
 
-        {/* Substituí o diamante por raio (XP), mas pode usar diamante também! */}
-        <li className="diamond" title="Seu XP acumulado">
-          ⚡ {perfil.xpTotal} XP
-        </li>
+        <div className="topbar-right">
+          {usuario && (
+            <>
+              <div className="tb-badge admin">
+                <i className="fa-solid fa-gear"></i> {usuario.username.toUpperCase()}
+              </div>
 
-        <li>
-          <button className="logout" onClick={handleLogout} >
-        Sair
-      </button>
-        </li>
-      </ul>
+              {/* Trocamos a classe 'fire' pela 'heart' e o ícone */}
+              <div className="tb-badge heart">
+                <i className="fa-solid fa-heart"></i> {usuario.vidasAtuais !== undefined ? usuario.vidasAtuais : 5}
+              </div>
+
+              <div className="tb-badge gem">
+                <i className="fa-solid fa-gem"></i> 455
+              </div>
+
+              <div className="tb-badge level">
+                <div className="level-col">
+                  <span style={{ color: ligaInfo.cor, fontWeight: "bold" }}>
+                    <i className={`fa-solid ${ligaInfo.icone}`}></i> Liga {ligaInfo.nome}
+                  </span>
+                  <span className="level-sub">
+                    {usuario.xpTotal} XP Acumulado
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+
+          <button className="tb-btn-sair" onClick={logout}>
+            Sair
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

@@ -31,8 +31,31 @@ function Licao2() {
   })
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) navigate("/login")
-  }, [navigate])
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    // BLOQUEIO DE ENTRADA: Checa as vidas antes de deixar jogar
+    fetch("http://localhost:8080/api/alunos/meu-perfil", {
+      headers: { "Authorization": `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(user => {
+      // Se não tem vida, bloqueia e manda de volta pro mapa
+      if (user.vidasAtuais <= 0) {
+        setModal({
+          isOpen: true,
+          tipo: "erro",
+          titulo: "Energia Esgotada! 💔",
+          mensagem: "Você está com 0 vidas! Volte e refaça a Lição 1 (Hello World) para recuperar sua energia.",
+          acaoFechar: () => navigate("/dashboard") // Expulsa pro mapa
+        });
+      }
+    })
+    .catch(err => console.error(err));
+  }, [navigate]);
 
   const handleDragStart = (item) => {
     setDragItem(item)
@@ -77,6 +100,9 @@ function Licao2() {
       const data = await response.json()
       setCarregando(false)
 
+      // 📢 ADICIONE ESTA LINHA AQUI NA LICAO 2 TAMBÉM!
+      window.dispatchEvent(new Event('atualizarPerfil'))
+
       if (sucesso) {
         setModal({
           isOpen: true, tipo: "sucesso",
@@ -84,13 +110,27 @@ function Licao2() {
           mensagem: data.xpGanho ? "+50 XP! Variáveis dominadas." : "Conteúdo revisado.",
           acaoFechar: () => navigate("/dashboard")
         })
+      // DENTRO DO enviarProgressoParaBackend do Licao2.jsx e Licao3.jsx
       } else {
-        setModal({
-          isOpen: true, tipo: "erro",
-          titulo: "Ops, gaveta errada!",
-          mensagem: "Você perdeu 1 vida. Preste mais atenção nos tipos de dados!",
-          acaoFechar: () => setModal({ ...modal, isOpen: false })
-        })
+        const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
+
+        if (vidasRestantes <= 0) {
+            setModal({
+                isOpen: true,
+                tipo: "erro",
+                titulo: "Game Over! 💔",
+                mensagem: "Suas vidas acabaram! Você será redirecionado para o mapa. Refaça a Lição 1 para continuar.",
+                acaoFechar: () => navigate("/dashboard") // Expulsa pro mapa
+            });
+        } else {
+            setModal({
+              isOpen: true,
+              tipo: "erro",
+              titulo: "❌ Gaveta Errada!", // Ajuste a mensagem conforme a lição
+              mensagem: `Você errou e perdeu 1 coração. Vidas restantes: ${vidasRestantes}`,
+              acaoFechar: () => setModal({ ...modal, isOpen: false })
+            })
+        }
       }
     } catch (error) {
       console.error(error)

@@ -1,104 +1,77 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/trilha.css";
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import "../styles/trilha.css"
 
 function Trilha() {
-  const navigate = useNavigate();
-  const [trilhas, setTrilhas] = useState([]);
-  const [desafiosConcluidos, setDesafiosConcluidos] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const navigate = useNavigate()
+  const [xpTotal, setXpTotal] = useState(0)
 
   useEffect(() => {
-    const carregarDadosDoBanco = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+    const token = localStorage.getItem("token")
+    if (token) {
+      fetch("http://localhost:8080/api/alunos/meu-perfil", {
+        headers: { "Authorization": `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => setXpTotal(data.xpTotal || 0))
+    }
+  }, [])
 
-      try {
-        // 1. Busca as Trilhas/Mundos do seu Spring Boot
-        const resTrilhas = await fetch("http://localhost:8080/api/trilhas");
-        const dataTrilhas = await resTrilhas.json();
+  // Nossas lições (Mundo 1)
+  const licoes = [
+    { id: 1, titulo: "Hello World", custoXp: 0 },
+    { id: 2, titulo: "Mundo das Variáveis", custoXp: 50 },
+    { id: 3, titulo: "A Primeira Calculadora", custoXp: 100 }
+  ]
 
-        // 2. Busca o Perfil para saber o que o Bruno já completou
-        const resPerfil = await fetch("http://localhost:8080/api/alunos/meu-perfil", {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        const dataPerfil = await resPerfil.json();
-
-        setTrilhas(dataTrilhas);
-        setDesafiosConcluidos(dataPerfil.desafiosConcluidos || []);
-      } catch (error) {
-        console.error("Erro ao sincronizar com o servidor:", error);
-      } finally {
-        setCarregando(false);
-      }
-    };
-
-    carregarDadosDoBanco();
-  }, [navigate]);
-
-  // Lógica para descobrir qual é o próximo desafio (estrela)
-  const todosDesafiosIds = trilhas.flatMap(t => t.mundos.flatMap(m => m.desafios.map(d => d.id)));
-  const idProximoDesafio = todosDesafiosIds.find(id => !desafiosConcluidos.includes(id));
-
-  const handleClick = (desafio, status) => {
-    if (status === "bloqueado") return;
-    // Navega para a rota que o LicaoManager vai tratar
-    navigate(`/licao/${desafio.id}`);
-  };
-
-  if (carregando) return <p>Carregando trilha...</p>;
+  const abrirLicao = (id) => {
+    navigate(`/licao/${id}`)
+  }
 
   return (
     <div className="trilha-container">
-      {trilhas.map((trilha) => (
-        <div key={trilha.id}>
-          {/* Mantendo o seu H1 e Subtitle original */}
-          <h1>{trilha.nome}</h1>
+      <div className="trilha-header">
+        <h1>Mundo 1</h1>
+        <p>Fundamentos da Programação</p>
+      </div>
+
+      <div className="trilha-mapa">
+        <div className="trilha-linha"></div> {/* A linha do meio */}
+
+        {licoes.map((licao, index) => {
+          const isLiberada = xpTotal >= licao.custoXp;
+          const isConcluida = xpTotal >= (licao.custoXp + 50);
           
-          {trilha.mundos.map((mundo) => (
-            <div key={mundo.id}>
-              <p className="subtitle">{mundo.nome}</p>
+          // Lógica visual: Se passou da fase é Check. Se é a fase atual, é Estrela. Se não chegou, Cadeado.
+          let iconClass = "fa-lock";
+          let statusClass = "locked";
+          
+          if (isConcluida) {
+            iconClass = "fa-check";
+            statusClass = "completed";
+          } else if (isLiberada) {
+            iconClass = "fa-star";
+            statusClass = "current";
+          }
 
-              <div className="trilha-vertical">
-                <div className="linha"></div>
+          // Intercala os itens um pouco pra esquerda e um pouco pra direita
+          const alignmentClass = index % 2 === 0 ? "left-node" : "right-node";
 
-                {mundo.desafios.map((desafio, index) => {
-                  const isConcluido = desafiosConcluidos.includes(desafio.id);
-                  const isAtual = desafio.id === idProximoDesafio;
-                  
-                  // Define o status exatamente como você tinha antes
-                  let status = "bloqueado";
-                  if (isConcluido) status = "feito";
-                  else if (isAtual || (desafiosConcluidos.length === 0 && index === 0)) status = "ativo";
-
-                  return (
-                    <div
-                      key={desafio.id}
-                      // Mantendo suas classes left/right e status
-                      className={`nivel ${status} ${index % 2 === 0 ? "left" : "right"}`}
-                      onClick={() => handleClick(desafio, status)}
-                    >
-                      {/* Voltando para os seus Emojis originais */}
-                      <div className="circulo">
-                        {status === "feito" && "✅"}
-                        {status === "ativo" && "⭐"}
-                        {status === "bloqueado" && "🔒"}
-                      </div>
-
-                      <span>{desafio.titulo || desafio.nome}</span>
-                    </div>
-                  );
-                })}
+          return (
+            <div key={licao.id} className={`trilha-node-wrapper ${alignmentClass}`}>
+              <div 
+                className={`trilha-node ${statusClass}`}
+                onClick={() => isLiberada && abrirLicao(licao.id)}
+              >
+                <i className={`fa-solid ${iconClass}`}></i>
               </div>
+              <div className="trilha-label">{licao.titulo}</div>
             </div>
-          ))}
-        </div>
-      ))}
+          )
+        })}
+      </div>
     </div>
-  );
+  )
 }
 
-export default Trilha;
+export default Trilha

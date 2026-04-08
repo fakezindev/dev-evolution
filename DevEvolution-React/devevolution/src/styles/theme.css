@@ -23,16 +23,38 @@
 }
 
 
-  html {
+
+  html, body {
     font-size: var(--font-size);
-  }
-  body{
-    background-color:var(--background);
-  
-    margin: 0%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #0f172a; /* Garante o fundo azul escuro geral */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
+  /* O container principal que segura a Sidebar e o Content */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+/* A área direita (onde fica o Topbar e as Lições) */
+.content {
+  flex: 1; /* Faz ocupar todo o resto da tela */
+  display: flex;
+  flex-direction: column;
+  /* SE TIVER PADDING AQUI, É ELE QUE CAUSA O VÃO! DEIXE 0 */
+  padding: 0; 
+  margin: 0;
+}
+
+  .content{
+    margin-left: 252px; 
+    margin-top: 30px;
+}
+  
   h3{
     color: var(--secondary);
   }
@@ -58,18 +80,6 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
-  .layout{
-    display:flex;
-    
-  }
-  .content{
-    margin-left: 250px; 
-    margin-top: 70px;   
-    padding: 20px;
-    flex:1;
-    display:flex;
-    flex-direction:column;
-}
 
 .left-sidebar{
    position: fixed;

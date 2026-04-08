@@ -1,116 +1,111 @@
-@import "theme.css";
-
-.trilha-container h1{
-    font-size: 50px;
-    color: white;
-    font-weight: bolder;
-    margin-bottom: 2px;
-}
-.trilha-container{
-  text-align:center;
-  padding-top:40px;
+.trilha-container {
+  background-color: #0f172a; /* O mesmo Azul Escuro! */
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: white;
 }
 
-.subtitle{
-  color:#8fa1c2;
-  font-size: 1.5rem;
-  margin-bottom:70px;
+.trilha-header {
+  text-align: center;
+  margin-bottom: 60px;
 }
 
-/* container */
-.trilha-vertical{
-  position:relative;
-  height:600px;
-  width:300px;
-  margin:auto;
+.trilha-header h1 {
+  font-size: 36px;
+  margin: 0 0 10px 0;
 }
 
-/* linha progresso */
-.linha{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  width:10px;
-  height:100%;
-  background:#1f3761;
-  border-radius:10px;
+.trilha-header p {
+  font-size: 18px;
+  color: #7b84a4; /* Azul cinzento */
+  margin: 0;
 }
 
-/* niveis */
-.nivel{
-  position:absolute;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  transition:0.3s;
+.trilha-mapa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  gap: 50px;
+  width: 100%;
+  max-width: 400px;
 }
 
-/* zigue-zague */
-.left{
-  left:0;
+/* A Linha Vertical no Fundo */
+.trilha-linha {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  background-color: #212536; /* Cor da linha */
+  border-radius: 10px;
+  z-index: 0;
 }
 
-.right{
-  right:0;
+.trilha-node-wrapper {
+  position: relative;
+  z-index: 1; /* Fica por cima da linha */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 150px;
 }
 
-/* posições verticais */
-.nivel:nth-child(2){ top:0 }
-.nivel:nth-child(3){ top:150px }
-.nivel:nth-child(4){ top:300px }
-.nivel:nth-child(5){ top:450px }
+/* Deslocamento Zig-Zag */
+.left-node { transform: translateX(-40px); }
+.right-node { transform: translateX(40px); }
 
-/* circulo */
-.circulo{
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  transition:0.3s;
+.trilha-node {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 0 rgba(0,0,0,0.2); /* Sombra estilo botão de jogo */
 }
 
-/* ativo */
-.ativo .circulo{
-  background:#3b82f6;
-  box-shadow:0 0 20px rgba(59,130,246,0.6);
+.trilha-node:active {
+  transform: translateY(8px);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
 }
 
-/* feito */
-.feito .circulo{
-  background:#22c55e;
+/* ESTADOS VISUAIS DA BOLINHA */
+.trilha-node.completed {
+  background-color: #3b82f6; /* Azul vibrante */
+  color: white;
 }
 
-/* bloqueado */
-.bloqueado{
-  cursor:not-allowed;
+.trilha-node.current {
+  background-color: #3b82f6;
+  color: white;
+  border: 5px solid rgba(59, 130, 246, 0.3); /* Aura em volta da atual */
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 8px 0 rgba(0,0,0,0.2);
 }
 
-.bloqueado .circulo{
-  background:#2a3a55;
-  opacity:0.5;
+.trilha-node.locked {
+  background-color: #212536; /* Cinza escuro da linha */
+  color: #4a506b;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-.bloqueado span{
-  opacity:0.5;
+.trilha-node.locked:active {
+  transform: none; /* Não aperta se estiver trancado */
 }
 
-
-/* hover efeito */
-.circulo:hover{
-  transform:scale(1.1);
-  box-shadow:0 0 25px rgba(255,255,255,0.3);
-}
-.nivel:active .circulo{
-  transform: scale(0.95);
-}
-
-/* texto */
-.nivel span{
-  color:#fff;
-  font-weight:500;
-  max-width:120px;
+.trilha-label {
+  font-weight: bold;
+  text-align: center;
+  font-size: 15px;
+  color: #e2e8f0;
 }

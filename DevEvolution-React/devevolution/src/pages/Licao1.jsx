@@ -38,26 +38,52 @@ function Licao1() {
 
       if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
+      // Lê o JSON UMA ÚNICA VEZ aqui
       const data = await response.json()
       setCarregando(false)
 
+      // 📢 DISPARA O EVENTO PARA O TOPBAR ATUALIZAR
+      window.dispatchEvent(new Event('atualizarPerfil'))
+
       if (sucesso) {
+        // 1. Lê a variável correta que o Java enviou (agora se chama xpTotal no DTO)
+        const ganhouXp = data.xpTotal > 0;
+        
+        // 2. Lógica para saber se ele acabou de renascer!
+        const recuperouVida = !ganhouXp && data.vidasAtuais === 1;
+
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: data.xpGanho ? "✅ Missão Concluída!" : "Revisão Concluída!",
-          mensagem: data.xpGanho ? "+50 XP adicionados!" : "Conteúdo revisado com sucesso.",
+          // Muda o título dinamicamente:
+          titulo: ganhouXp ? "✅ Missão Concluída!" : (recuperouVida ? "💖 Vida Recuperada!" : "Revisão Concluída!"),
+          // Muda a mensagem dinamicamente:
+          mensagem: ganhouXp ? `+${data.xpTotal} XP adicionados!` : (recuperouVida ? "Você acertou o código e recuperou 1 coração para continuar!" : "Conteúdo revisado com sucesso."),
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
-        setModal({
-          isOpen: true,
-          tipo: "erro",
-          titulo: "❌ Código Incorreto",
-          mensagem: "Você perdeu 1 coração (Vida). Verifique a sintaxe do console.log.",
-          acaoFechar: () => setModal({ ...modal, isOpen: false })
-        })
+        // Tenta ler vidasAtuais ou vidas (fallback caso o Java mande diferente)
+        const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
+
+        if (vidasRestantes <= 0) {
+            setModal({
+                isOpen: true,
+                tipo: "erro",
+                titulo: "💔 Sem Vidas!",
+                mensagem: "Você está com 0 vidas, mas como esta é a fase inicial, você pode continuar tentando até acertar e recuperar 1 coração!",
+                acaoFechar: () => setModal({ ...modal, isOpen: false }) // NÃO USA O NAVIGATE AQUI
+            });
+        } else {
+            setModal({
+              isOpen: true,
+              tipo: "erro",
+              titulo: "❌ Código Incorreto",
+              mensagem: `Você perdeu 1 coração. Vidas restantes: ${vidasRestantes}`,
+              acaoFechar: () => setModal({ ...modal, isOpen: false })
+            })
+        }
       }
+
     } catch (error) {
       console.error(error)
       setCarregando(false)

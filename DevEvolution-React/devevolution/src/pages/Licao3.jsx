@@ -29,8 +29,31 @@ function Licao3() {
 
   // 🚫 SEGURANÇA
   useEffect(() => {
-    if (!localStorage.getItem("token")) navigate("/login")
-  }, [navigate])
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    // BLOQUEIO DE ENTRADA: Checa as vidas antes de deixar jogar
+    fetch("http://localhost:8080/api/alunos/meu-perfil", {
+      headers: { "Authorization": `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(user => {
+      // Se não tem vida, bloqueia e manda de volta pro mapa
+      if (user.vidasAtuais <= 0) {
+        setModal({
+          isOpen: true,
+          tipo: "erro",
+          titulo: "Energia Esgotada! 💔",
+          mensagem: "Você está com 0 vidas! Volte e refaça a Lição 1 (Hello World) para recuperar sua energia.",
+          acaoFechar: () => navigate("/dashboard") // Expulsa pro mapa
+        });
+      }
+    })
+    .catch(err => console.error(err));
+  }, [navigate]);
 
   // 📡 COMUNICAÇÃO COM O JAVA
   const enviarProgressoParaBackend = async (sucesso) => {
@@ -43,33 +66,50 @@ function Licao3() {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 3, 
+          desafioId: parseInt(id) || 1,
           sucesso: sucesso
         })
       })
 
       if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
+      // Lê o JSON UMA ÚNICA VEZ aqui
       const data = await response.json()
       setCarregando(false)
+
+      // 📢 DISPARA O EVENTO PARA O TOPBAR ATUALIZAR
+      window.dispatchEvent(new Event('atualizarPerfil'))
 
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: data.xpGanho ? "✅ Calculadora Ativada!" : "Revisão Concluída!",
-          mensagem: data.xpGanho ? "+50 XP! Você dominou o fluxo de dados." : "Conteúdo revisado.",
+          titulo: data.xpGanho ? "✅ Missão Concluída!" : "Revisão Concluída!",
+          mensagem: data.xpGanho ? "+50 XP adicionados!" : "Conteúdo revisado com sucesso.",
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
-        setModal({
-          isOpen: true,
-          tipo: "erro",
-          titulo: "❌ Lógica Incorreta",
-          mensagem: "Você perdeu 1 Vida. Verifique se seguiu todos os passos e usou Number() para converter o texto.",
-          acaoFechar: () => setModal({ ...modal, isOpen: false })
-        })
+        const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
+
+        if (vidasRestantes <= 0) {
+            setModal({
+                isOpen: true,
+                tipo: "erro",
+                titulo: "Game Over! 💔",
+                mensagem: "Suas vidas acabaram! Você será redirecionado para o mapa. Refaça a Lição 1 para continuar.",
+                acaoFechar: () => navigate("/dashboard") // Expulsa pro mapa
+            });
+        } else {
+            setModal({
+              isOpen: true,
+              tipo: "erro",
+              titulo: "❌ Lógica Incorreta!", // Ajuste a mensagem conforme a lição
+              mensagem: `Você errou e perdeu 1 coração. Vidas restantes: ${vidasRestantes}`,
+              acaoFechar: () => setModal({ ...modal, isOpen: false })
+            })
+        }
       }
+
     } catch (error) {
       console.error(error)
       setCarregando(false)
