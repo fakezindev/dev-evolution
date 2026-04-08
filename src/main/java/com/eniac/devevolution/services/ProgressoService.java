@@ -27,6 +27,69 @@ public class ProgressoService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Transactional
+    public ProgressoResponseDTO submeterProgresso(Long desafioId, boolean sucesso, String username) {
+        Student student = studentRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Estudante não encontrado"));
+
+        Desafio desafio = desafioRepository.findById(desafioId)
+                .orElseThrow(() -> new RuntimeException("Desafio não encontrado"));
+
+        // 1. Verifica se ele já tinha concluído (usando o metodo novo do repositório)
+        boolean jaConcluiuAnteriormente = progressoRepository.existsByStudentAndDesafioAndConcluidoTrue(student, desafio);
+
+        if (sucesso) {
+            int xpGanho = 0;
+
+            // 🛡️ CORREÇÃO DA REGRA DE RECUPERAÇÃO:
+            // Não importa se é revisão ou primeira vez. Se ele acertou e estava zerado, ele ganha 1 vida!
+            if (student.getVidasAtuais() <= 0) {
+                student.setVidasAtuais(1);
+                System.out.println("Cura ativada para o aluno: " + username);
+            }
+
+            // ⚡ REGRA DE XP E SALVAMENTO:
+            // Só ganha o XP e cria o registro na tabela se for a PRIMEIRA vitória
+            if (!jaConcluiuAnteriormente) {
+                xpGanho = 50;
+                student.setXpTotal(student.getXpTotal() + xpGanho);
+
+                ProgressoAluno novoProgresso = new ProgressoAluno();
+                novoProgresso.setStudent(student);
+                novoProgresso.setDesafio(desafio);
+                novoProgresso.setConcluido(true);
+                novoProgresso.setDataConclusao(LocalDateTime.now());
+
+                progressoRepository.save(novoProgresso);
+            }
+
+            studentRepository.save(student);
+
+            // Passando a ordem correta para o DTO que corrigimos no passo anterior!
+            return new ProgressoResponseDTO(
+                    "Missão concluída com sucesso!",
+                    xpGanho,
+                    student.getVidasAtuais(),
+                    true
+            );
+
+        } else {
+            // 💔 REGRA DE DANO:
+            if (student.getVidasAtuais() > 0) {
+                student.setVidasAtuais(student.getVidasAtuais() - 1);
+                studentRepository.save(student);
+            }
+
+            // CORREÇÃO AQUI: O texto (mensagem) vem primeiro!
+            return new ProgressoResponseDTO(
+                    "Código incorreto. Você perdeu uma vida.",
+                    0,
+                    student.getVidasAtuais(),
+                    false
+            );
+        }
+    }
+
     @Transactional // Garante que se der erro no meio, o banco desfaz tudo e o aluno não perde vida à toa
     public ProgressoResponseDTO processarSubmissao(String username, ProgressoRequestDTO dto) {
 
