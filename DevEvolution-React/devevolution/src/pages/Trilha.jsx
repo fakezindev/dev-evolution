@@ -6,6 +6,8 @@ function Trilha() {
   const navigate = useNavigate()
   const [xpTotal, setXpTotal] = useState(0)
 
+  const devMode = localStorage.getItem("devMode") === "true";
+
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (token) {
@@ -21,7 +23,8 @@ function Trilha() {
   const licoes = [
     { id: 1, titulo: "Hello World", custoXp: 0 },
     { id: 2, titulo: "Mundo das Variáveis", custoXp: 50 },
-    { id: 3, titulo: "A Primeira Calculadora", custoXp: 100 }
+    { id: 3, titulo: "A Primeira Calculadora", custoXp: 100 },
+    { id: 4, titulo: "Calculo de Descontos", custoXp: 150 }
   ]
 
   const abrirLicao = (id) => {
@@ -39,8 +42,8 @@ function Trilha() {
         <div className="trilha-linha"></div> {/* A linha do meio */}
 
         {licoes.map((licao, index) => {
-          const isLiberada = xpTotal >= licao.custoXp;
-          const isConcluida = xpTotal >= (licao.custoXp + 50);
+          const isLiberada = devMode || xpTotal >= licao.custoXp;
+          const isConcluida = !devMode && xpTotal >= (licao.custoXp + 50);
           
           // Lógica visual: Se passou da fase é Check. Se é a fase atual, é Estrela. Se não chegou, Cadeado.
           let iconClass = "fa-lock";
@@ -61,7 +64,7 @@ function Trilha() {
             <div key={licao.id} className={`trilha-node-wrapper ${alignmentClass}`}>
               <div 
                 className={`trilha-node ${statusClass}`}
-                onClick={() => isLiberada && abrirLicao(licao.id)}
+                onClick={() => (isLiberada || devMode) && abrirLicao(licao.id)}
               >
                 <i className={`fa-solid ${iconClass}`}></i>
               </div>
