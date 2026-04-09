@@ -4,17 +4,18 @@ import "../styles/licao.css"
 import LoadingSpinner from "../components/LoadingSpinner"
 import FeedbackModal from "../components/FeedbackModal"
 
-function Licao4() {
-  const codeScaffold = `
-let preco = 100
+function Licao5() {
+  const codeScaffold = `// 1. Peça o nome do aluno
+let nome = prompt("Digite o nome:")
 
-let desconto = 10
+// 2. Peça as três notas
+let nota1 = Number(prompt("Nota 1:"))
+let nota2 = Number(prompt("Nota 2:"))
+let nota3 = Number(prompt("Nota 3:"))
 
-// 3. Calcule o valor do desconto
+// 3. Calcule a média
 
-// 4. Calcule o novo preço
-
-// 5. Mostre no console
+// 4. Mostre o resultado
 `
 
   const [codigo, setCodigo] = useState(codeScaffold)
@@ -44,7 +45,7 @@ let desconto = 10
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 4,
+          desafioId: parseInt(id) || 5,
           sucesso
         })
       })
@@ -58,9 +59,9 @@ let desconto = 10
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: "💸 Desconto Calculado!",
+          titulo: "🎓 Média Calculada!",
           mensagem: data.xpGanho
-            ? "+50 XP! Você entendeu cálculo com variáveis."
+            ? "+50 XP! Você dominou médias."
             : "Exercício revisado.",
           acaoFechar: () => navigate("/dashboard")
         })
@@ -68,8 +69,8 @@ let desconto = 10
         setModal({
           isOpen: true,
           tipo: "erro",
-          titulo: "❌ Lógica incorreta",
-          mensagem: "Você perdeu 1 vida. Revise os cálculos.",
+          titulo: "❌ Código incorreto",
+          mensagem: "Você perdeu 1 vida. Revise o cálculo da média.",
           acaoFechar: () => setModal({ ...modal, isOpen: false })
         })
       }
@@ -81,46 +82,48 @@ let desconto = 10
     }
   }
 
-  // 🧠 validação inteligente (igual Lição 3)
+  // 🧠 validação inteligente
   const verificarCodigo = async () => {
     setConsoleOutput("Analisando código...")
 
     const codigoLimpo = codigo.replace(/(\/\*.*\*\/|\/\/.*|\s+)/g, '')
 
-    const temPreco = codigoLimpo.includes("preco=")
-    const temDesconto = codigoLimpo.includes("desconto=")
-    const temValorDesconto = codigoLimpo.includes("valorDesconto=")
-    const temNovoPreco = codigoLimpo.includes("novoPreco=")
+    const temNome = codigoLimpo.includes("nome=")
+    const temNotas = codigoLimpo.includes("nota1=") && codigoLimpo.includes("nota2=") && codigoLimpo.includes("nota3=")
+    const temMedia = codigoLimpo.includes("media=")
+    const temDivisao = codigoLimpo.includes("/3")
+    const temToFixed = codigoLimpo.includes("toFixed(2)")
     const temConsole = codigoLimpo.includes("console.log")
 
-    if (temPreco && temDesconto && temValorDesconto && temNovoPreco && temConsole) {
+    if (temNome && temNotas && temMedia && temDivisao && temToFixed && temConsole) {
 
       setTimeout(() => {
-        const preco = 100
-        const desconto = 10
+        const nome = "Leo"
+        const nota1 = 7
+        const nota2 = 8
+        const nota3 = 10
 
-        const valorDesconto = (preco * desconto) / 100
-        const novoPreco = preco - valorDesconto
+        const media = ((nota1 + nota2 + nota3) / 3).toFixed(2)
 
         setConsoleOutput(
-          `> preco = ${preco}
-> desconto = ${desconto}
-> valorDesconto = ${valorDesconto}
-> novoPreco = ${novoPreco}
+`> nome = ${nome}
+> notas = ${nota1}, ${nota2}, ${nota3}
+> media = ${media}
 
-Resultado: R$ ${novoPreco}`
+"A média final do aluno ${nome} é ${media}"`
         )
 
         enviarProgressoParaBackend(true)
       }, 500)
 
     } else {
-      let erro = "Erro de lógica:\n"
+      let erro = "Erro:\n"
 
-      if (!temPreco) erro += "- Crie a variável preco\n"
-      if (!temDesconto) erro += "- Crie a variável desconto\n"
-      if (!temValorDesconto) erro += "- Calcule valorDesconto\n"
-      if (!temNovoPreco) erro += "- Calcule novoPreco\n"
+      if (!temNome) erro += "- Crie a variável nome\n"
+      if (!temNotas) erro += "- Crie as 3 notas\n"
+      if (!temMedia) erro += "- Crie a variável media\n"
+      if (!temDivisao) erro += "- Divida por 3\n"
+      if (!temToFixed) erro += "- Use toFixed(2)\n"
       if (!temConsole) erro += "- Use console.log\n"
 
       setConsoleOutput(erro)
@@ -147,21 +150,23 @@ Resultado: R$ ${novoPreco}`
         </div>
 
         <div className="ide-new-title">
-          <h2>💡 Cálculo de Desconto</h2>
+          <h2>🎓 Média Simples</h2>
         </div>
 
         <div className="ide-new-box purple">
           <h4>OBJETIVO</h4>
-          <p>Calcular desconto e exibir o novo preço.</p>
+          <p>
+            Calcular a média de três notas e exibir com 2 casas decimais.
+          </p>
         </div>
 
         <div className="ide-new-box purple">
           <h4>PASSO A PASSO</h4>
           <ol>
-            <li>Crie <b>preco</b></li>
-            <li>Crie <b>desconto</b></li>
-            <li>Calcule <b>valorDesconto</b></li>
-            <li>Calcule <b>novoPreco</b></li>
+            <li>Peça o nome</li>
+            <li>Peça 3 notas</li>
+            <li>Calcule a média</li>
+            <li>Use <b>toFixed(2)</b></li>
             <li>Mostre no console</li>
           </ol>
         </div>
@@ -195,7 +200,7 @@ Resultado: R$ ${novoPreco}`
           </div>
 
           <div className="ide-new-console">
-            <span className="prompt">&gt;_</span> {consoleOutput}
+            <span className="prompt">&gt;_</span>
           </div>
         </div>
 
@@ -214,4 +219,4 @@ Resultado: R$ ${novoPreco}`
   )
 }
 
-export default Licao4
+export default Licao5
