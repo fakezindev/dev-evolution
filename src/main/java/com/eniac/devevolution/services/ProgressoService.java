@@ -1,6 +1,5 @@
 package com.eniac.devevolution.services;
 
-import com.eniac.devevolution.dtos.ProgressoRequestDTO;
 import com.eniac.devevolution.dtos.ProgressoResponseDTO;
 import com.eniac.devevolution.entities.Desafio;
 import com.eniac.devevolution.entities.ProgressoAluno;
@@ -29,160 +28,80 @@ public class ProgressoService {
 
     @Transactional
     public ProgressoResponseDTO submeterProgresso(Long desafioId, boolean sucesso, String username) {
+
+        // 1. Busca os envolvidos
         Student student = studentRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Estudante não encontrado"));
 
         Desafio desafio = desafioRepository.findById(desafioId)
                 .orElseThrow(() -> new RuntimeException("Desafio não encontrado"));
 
-        // 1. Verifica se ele já tinha concluído (usando o metodo novo do repositório)
-        boolean jaConcluiuAnteriormente = progressoRepository.existsByStudentAndDesafioAndConcluidoTrue(student, desafio);
-
-        if (sucesso) {
-            int xpGanho = 0;
-
-            // 🛡️ CORREÇÃO DA REGRA DE RECUPERAÇÃO:
-            // Não importa se é revisão ou primeira vez. Se ele acertou e estava zerado, ele ganha 1 vida!
-            if (student.getVidasAtuais() <= 0) {
-                student.setVidasAtuais(1);
-                System.out.println("Cura ativada para o aluno: " + username);
-            }
-
-            // ⚡ REGRA DE XP E SALVAMENTO:
-            // Só ganha o XP e cria o registro na tabela se for a PRIMEIRA vitória
-            if (!jaConcluiuAnteriormente) {
-                xpGanho = 50;
-                student.setXpTotal(student.getXpTotal() + xpGanho);
-
-                ProgressoAluno novoProgresso = new ProgressoAluno();
-                novoProgresso.setStudent(student);
-                novoProgresso.setDesafio(desafio);
-                novoProgresso.setConcluido(true);
-                novoProgresso.setDataConclusao(LocalDateTime.now());
-
-                progressoRepository.save(novoProgresso);
-            }
-
-            studentRepository.save(student);
-
-            // Passando a ordem correta para o DTO que corrigimos no passo anterior!
-            return new ProgressoResponseDTO(
-                    "Missão concluída com sucesso!",
-                    xpGanho,
-                    student.getVidasAtuais(),
-                    true
-            );
-
-        } else {
-            // 💔 REGRA DE DANO:
-            if (student.getVidasAtuais() > 0) {
-                student.setVidasAtuais(student.getVidasAtuais() - 1);
-                studentRepository.save(student);
-            }
-
-            // CORREÇÃO AQUI: O texto (mensagem) vem primeiro!
-            return new ProgressoResponseDTO(
-                    "Código incorreto. Você perdeu uma vida.",
-                    0,
-                    student.getVidasAtuais(),
-                    false
-            );
-        }
-    }
-
-    @Transactional // Garante que se der erro no meio, o banco desfaz tudo e o aluno não perde vida à toa
-    public ProgressoResponseDTO processarSubmissao(String username, ProgressoRequestDTO dto) {
-
-        // 1. Busca quem está jogando e qual é o desafio
-        Student student = studentRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado: " + username));
-
-        Desafio desafio = desafioRepository.findById(dto.desafioId())
-                .orElseThrow(() -> new RuntimeException("Desafio não encontrado."));
-
-        // 2. Procura se ele já tentou esse desafio antes. Se não, cria um progresso novo.
+        // 2. Busca se já existe um progresso salvo. Se não existir, cria um na memória.
         ProgressoAluno progresso = progressoRepository.findByStudentIdAndDesafioId(student.getId(), desafio.getId())
                 .orElse(new ProgressoAluno());
 
-        progresso.setStudent(student);
-        progresso.setDesafio(desafio);
-        progresso.setCodigoSubmetido(dto.codigoSubmetido());
-        progresso.setDataConclusao(LocalDateTime.now());
+        boolean jaEstavaConcluido = Boolean.TRUE.equals(progresso.getConcluido());
+        int maxVidas = 5; // O limite máximo de corações da sua UI
+        String mensagemModal;
+        int xpGanho = 0;
 
-        String mensagem;
+        // 3. Regras do Jogo
+        if (sucesso) {
+            // CASO A: PRIMEIRA VITÓRIA (Ganha XP)
+            if (!jaEstavaConcluido) {
+                xpGanho = desafio.getXpRecompensa(); // Pega o XP direto do banco (ex: 50, 100)
+                student.setXpTotal(student.getXpTotal() + xpGanho);
 
-        // 3. Regras de Gamificação (XP e Vidas)
-        if (dto.sucesso()) {
-            // Só ganha XP se for a primeira vez que passa (evita "farmar" XP no mesmo desafio)
-            if (!Boolean.TRUE.equals(progresso.getConcluido())) {
-                student.setXpTotal(student.getXpTotal() + desafio.getXpRecompensa());
+                progresso.setStudent(student);
+                progresso.setDesafio(desafio);
                 progresso.setConcluido(true);
+                progresso.setDataConclusao(LocalDateTime.now());
+
+
+                mensagemModal = "Você ganhou +" + xpGanho + " XP! Seu saldo subiu para " + student.getXpTotal() + " XP 🏆";
+
+                // Garantia contra bugs: se ele passou de primeira, mas estava com 0 vidas, resgata ele para 1
+                if (student.getVidasAtuais() <= 0) student.setVidasAtuais(1);
             }
-            mensagem = "Desafio concluído com sucesso! Você ganhou " + desafio.getXpRecompensa() + " XP 🏆";
+            // CASO B: REVISÃO / RECUPERAÇÃO (A fonte de cura)
+            else {
+                if (student.getVidasAtuais() < maxVidas) {
+                    student.setVidasAtuais(student.getVidasAtuais() + 1);
+                    mensagemModal = "Revisão perfeita! Você recuperou 1 coração ❤️";
+                } else {
+                    mensagemModal = "Revisão concluída! Suas vidas já estão no máximo.";
+                }
+            }
+
+            progressoRepository.save(progresso);
+
         } else {
-            // Se errou, tira 1 vida (mas não deixa ficar negativo)
+            // CASO C: ERROU (Toma dano)
             if (student.getVidasAtuais() > 0) {
                 student.setVidasAtuais(student.getVidasAtuais() - 1);
             }
-            mensagem = "Ops! Código incorreto. Você perdeu 1 vida ❤️";
+            mensagemModal = "Ops! Código incorreto. Você perdeu 1 vida 💔";
         }
 
-        // 4. Salva o status do desafio e o perfil atualizado do aluno
-        progressoRepository.save(progresso);
+        // 4. salva o perfil e devolve o DTO completo para o React!
         studentRepository.save(student);
 
-        // 5. Devolve o status fresquinho para o front-end atualizar as barrinhas
-        return new ProgressoResponseDTO(mensagem, student.getXpTotal(), student.getVidasAtuais(), progresso.getConcluido());
+        return new ProgressoResponseDTO(mensagemModal, student.getXpTotal(), student.getVidasAtuais(), progresso.getConcluido());
     }
 
     @Transactional
-    // 1. Mudamos de 'void' para 'boolean'
-    public boolean processarSubmissaoPrincipal(Long studentId, Long desafioId, boolean sucesso) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+    public void resetarProgresso(String username) {
+        Student student = studentRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Estudante não encontrado"));
 
-        boolean xpAdicionado = false; // Começa como falso
+        // 1. Apaga o histórico de lições concluídas desse aluno
+        progressoRepository.deleteByStudent(student);
 
-        if (sucesso) {
-            Optional<ProgressoAluno> progressoExistente = progressoRepository.findByStudentIdAndDesafioId(student.getId(), desafioId);
+        // 2. Zera o XP e devolve as 5 vidas iniciais
+        student.setXpTotal(0);
+        student.setVidasAtuais(5);
 
-            if (progressoExistente.isEmpty()) {
-                student.setXpTotal(student.getXpTotal() + 50);
-                xpAdicionado = true; // Opa! Ganhou XP!
-
-                Desafio desafio = desafioRepository.findById(desafioId).orElseThrow();
-                ProgressoAluno novoProgresso = new ProgressoAluno();
-                novoProgresso.setStudent(student);
-                novoProgresso.setDesafio(desafio);
-                progressoRepository.save(novoProgresso);
-            }
-        } else {
-            student.setVidasAtuais(Math.max(0, student.getVidasAtuais() - 1));
-        }
-
+        // 3. salva o aluno "zerado"
         studentRepository.save(student);
-
-        // 2. Retorna a fofoca para o Controller
-        return xpAdicionado;
-    }
-
-    @Transactional
-    public void processarSubmissaoRecuperacao(Long studentId, boolean sucesso) {
-        Student student = studentRepository.findById(studentId).orElseThrow();
-
-        // O aluno só pode recuperar vida se tiver menos de 3 (o máximo)
-        if (student.getVidasAtuais() >= 3) {
-            throw new RuntimeException("Você já está com as vidas cheias!");
-        }
-
-        if (sucesso) {
-            // Se ele acertou o exercício de reforço, ganha 1 coração!
-            // (Opcional: você pode dar um pouquinho de XP aqui também, tipo 10 XP)
-            student.setVidasAtuais(student.getVidasAtuais() + 1);
-            student.setXpTotal(student.getXpTotal() + 10);
-
-            studentRepository.save(student);
-        }
-        // Se ele errar a recuperação, nada acontece (ele continua com 0 vidas até acertar).
     }
 }

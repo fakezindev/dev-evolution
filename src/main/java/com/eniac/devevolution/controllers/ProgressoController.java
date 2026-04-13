@@ -1,5 +1,7 @@
 package com.eniac.devevolution.controllers;
 
+import com.eniac.devevolution.dtos.ProgressoRequestDTO;
+import com.eniac.devevolution.dtos.ProgressoResponseDTO;
 import com.eniac.devevolution.dtos.RespostaDto;
 import com.eniac.devevolution.services.ProgressoService;
 import com.eniac.devevolution.entities.Student;
@@ -25,34 +27,22 @@ public class ProgressoController {
 
     // 🎮 ROTA 1: Jogar a Trilha Principal
     @PostMapping("/submeter")
-    public ResponseEntity<Map<String, Boolean>> submeterDesafio(@RequestBody RespostaDto resposta, Authentication authentication) {
+    public ResponseEntity<ProgressoResponseDTO> submeter(@RequestBody ProgressoRequestDTO dto, Authentication authentication) {
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String usernameLogado = userDetails.getUsername();
+        // authentication.getName() pega o username do aluno logado via JWT
+        ProgressoResponseDTO response = progressoService.submeterProgresso(
+                dto.desafioId(),
+                dto.sucesso(),
+                authentication.getName()
+        );
 
-        Student student = studentRepository.findByUsername(usernameLogado)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-
-        // Guarda o resultado que veio do Service
-        boolean xpGanho = progressoService.processarSubmissaoPrincipal(student.getId(), resposta.desafioId(), resposta.sucesso());
-
-        // Manda um JSON bonitinho: { "xpGanho": true } ou { "xpGanho": false }
-        return ResponseEntity.ok(Map.of("xpGanho", xpGanho));
+        return ResponseEntity.ok(response);
     }
 
-    // 💖 ROTA 2: Recuperar Vidas
-    @PostMapping("/recuperar-vida")
-    public ResponseEntity<String> recuperarVida(@RequestBody RespostaDto resposta, Authentication authentication) {
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String usernameLogado = userDetails.getUsername();
-
-        // Trocamos o findByEmail pelo findByUsername aqui também!
-        Student student = studentRepository.findByUsername(usernameLogado)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado com o username: " + usernameLogado));
-
-        progressoService.processarSubmissaoRecuperacao(student.getId(), resposta.sucesso());
-
-        return ResponseEntity.ok("Tentativa de recuperação processada!");
+    @DeleteMapping("/resetar")
+    public ResponseEntity<String> resetarProgresso(Authentication authentication) {
+        progressoService.resetarProgresso(authentication.getName());
+        return ResponseEntity.ok("Progresso resetado com sucesso!");
     }
+
 }
