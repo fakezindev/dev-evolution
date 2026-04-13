@@ -23,8 +23,8 @@ function Trilha() {
   const licoes = [
     { id: 1, titulo: "Hello World", custoXp: 0 },
     { id: 2, titulo: "Mundo das Variáveis", custoXp: 50 },
-    { id: 3, titulo: "A Primeira Calculadora", custoXp: 100 },
-    { id: 4, titulo: "Calculo de Descontos", custoXp: 150 }
+    { id: 3, titulo: "A Primeira Calculadora", custoXp: 150 },
+    { id: 4, titulo: "Calculo de Descontos", custoXp: 300 }
   ]
 
   const abrirLicao = (id) => {

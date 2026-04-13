@@ -51,14 +51,18 @@ function Licao3() {
       if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
       const data = await response.json()
+
+      window.dispatchEvent(new Event('atualizarPerfil'));
       setCarregando(false)
 
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: data.xpGanho ? "✅ Calculadora Ativada!" : "Revisão Concluída!",
-          mensagem: data.xpGanho ? "+50 XP! Você dominou o fluxo de dados." : "Conteúdo revisado.",
+          // Se o XP total do aluno aumentou no banco, é vitória inédita. Senão, é revisão.
+          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
+          // A mensagem agora vem MASCADA direto do nosso Spring Boot!
+          mensagem: data.mensagem, 
           acaoFechar: () => navigate("/dashboard")
         })
       } else {

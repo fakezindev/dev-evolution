@@ -105,11 +105,11 @@ let desconto = 10
 
         setConsoleOutput(
           `> preco = ${preco}
-> desconto = ${desconto}
-> valorDesconto = ${valorDesconto}
-> novoPreco = ${novoPreco}
+          > desconto = ${desconto}
+          > valorDesconto = ${valorDesconto}
+          > novoPreco = ${novoPreco}
 
-Resultado: R$ ${novoPreco}`
+          Resultado: R$ ${novoPreco}`
         )
 
         enviarProgressoParaBackend(true)

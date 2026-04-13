@@ -105,9 +105,12 @@ function Licao2() {
 
       if (sucesso) {
         setModal({
-          isOpen: true, tipo: "sucesso",
-          titulo: data.xpGanho ? "Organização Perfeita!" : "Revisão Concluída!",
-          mensagem: data.xpGanho ? "+50 XP! Variáveis dominadas." : "Conteúdo revisado.",
+          isOpen: true,
+          tipo: "sucesso",
+          // Se o XP total do aluno aumentou no banco, é vitória inédita. Senão, é revisão.
+          titulo: data.xpTotal > 0 ? "✅ Missão Concluída!" : "💖 Revisão Concluída!",
+          // A mensagem agora vem MASCADA direto do nosso Spring Boot!
+          mensagem: data.mensagem, 
           acaoFechar: () => navigate("/dashboard")
         })
       // DENTRO DO enviarProgressoParaBackend do Licao2.jsx e Licao3.jsx

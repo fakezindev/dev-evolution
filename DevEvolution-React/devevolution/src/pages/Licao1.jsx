@@ -56,9 +56,9 @@ function Licao1() {
           isOpen: true,
           tipo: "sucesso",
           // Muda o título dinamicamente:
-          titulo: ganhouXp ? "✅ Missão Concluída!" : (recuperouVida ? "💖 Vida Recuperada!" : "Revisão Concluída!"),
+          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
           // Muda a mensagem dinamicamente:
-          mensagem: ganhouXp ? `+${data.xpTotal} XP adicionados!` : (recuperouVida ? "Você acertou o código e recuperou 1 coração para continuar!" : "Conteúdo revisado com sucesso."),
+          mensagem: ganhouXp ? `+50 XP adicionados!` : (recuperouVida ? "Você acertou o código e recuperou 1 coração para continuar!" : "Conteúdo revisado com sucesso."),
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
@@ -102,6 +102,7 @@ function Licao1() {
     // Aceita aspas simples ou duplas, Hello World ou Olá Mundo
     const acertou = 
       codigoLimpo.includes('console.log("Olá,Mundo!")') || 
+      codigoLimpo.includes('console.log("Olá, mundo!")') ||
       codigoLimpo.includes("console.log('Olá,Mundo!')") ||
       codigoLimpo.includes('console.log("HelloWorld")') ||
       codigoLimpo.includes("console.log('HelloWorld')")

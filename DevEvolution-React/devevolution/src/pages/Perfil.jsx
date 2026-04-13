@@ -99,6 +99,40 @@ function Perfil() {
     return <p style={{ textAlign: "center", padding: "50px" }}>Erro ao carregar usuário.</p>
   }
 
+  const handleResetarTrilha = async () => {
+    // 1. A Trava de Segurança usando o confirm nativo do navegador
+    const confirmacao = window.confirm(
+      "⚠️ ATENÇÃO!\n\nTem certeza que deseja resetar sua trilha? Isso apagará todo o seu XP, restaurará suas vidas para 5 e trancará todas as lições concluídas.\n\nEssa ação NÃO pode ser desfeita!"
+    );
+
+    // 2. Se ele clicou em "OK" (confirmou)
+    if (confirmacao) {
+      try {
+        const response = await fetch("http://localhost:8080/api/progresso/resetar", {
+          method: "DELETE", // Usamos DELETE por ser uma ação destrutiva
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+        if (response.ok) {
+          alert("Trilha resetada! Boa sorte no seu recomeço.");
+          
+          // 📢 Lembra do nosso rádio? Avisamos o Topbar para zerar o XP e subir as Vidas na hora!
+          window.dispatchEvent(new Event('atualizarPerfil'));
+          
+          // Opcional: Recarregar a página ou buscar os dados do perfil novamente para a tela atualizar
+          window.location.reload(); 
+        } else {
+          alert("Erro ao tentar resetar a trilha.");
+        }
+      } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro de conexão com o servidor.");
+      }
+    }
+  };
+
   return (
     <div className="perfil-container">
       <div className="perfil-header">
@@ -122,13 +156,10 @@ function Perfil() {
           <h1>{usuario.username}</h1>
 
           <h3>
-            {usuario.email} • {usuario.curso || "Software Engineering"}
+            {usuario.email} • {usuario.curso || "Iniciante"}
           </h3>
         
-          <button className="reset" onClick={() => {
-             localStorage.clear()
-             window.location.reload()
-          }}>
+          <button className="reset" onClick={handleResetarTrilha}>
             Resetar Trilha
           </button>
         </div>
