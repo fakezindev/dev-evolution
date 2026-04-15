@@ -1,0 +1,488 @@
+/* =========================================
+   ESTILOS DA NOVA IDE (PADRÃO FIGMA)
+========================================= */
+
+.ide-container {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 100px); /* Ajuste conforme o tamanho da sua Topbar */
+  padding: 20px;
+  background-color: transparent;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- PAINEL ESQUERDO --- */
+.ide-sidebar {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ide-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ide-title h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.ide-instruction-box {
+  background-color: #1a2332;
+  border: 1px solid #2d3748;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+/* --- PAINEL DIREITO --- */
+.ide-main {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ide-panel-header {
+  font-size: 12px;
+  font-weight: bold;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+}
+
+/* SAÍDA DO SIMULADOR */
+.ide-output-panel {
+  flex: 1; /* Ocupa metade do espaço direito */
+  display: flex;
+  flex-direction: column;
+}
+
+.ide-terminal {
+  flex: 1;
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  color: #fff;
+}
+
+.prompt {
+  color: #3b82f6;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+/* EDITOR DE CÓDIGO */
+.ide-editor-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ide-textarea {
+  flex: 1;
+  background-color: #1e1e1e;
+  border: 1px solid #2d2d2d;
+  border-radius: 12px 12px 0 0;
+  padding: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  color: #d4d4d4;
+  resize: none;
+  outline: none;
+}
+
+.ide-textarea::placeholder {
+  color: #6b7280;
+}
+
+.ide-actions {
+  display: flex;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  padding: 15px 20px;
+  border: 1px solid #2d2d2d;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.btn-ide-reset {
+  background-color: #334155;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-ide-reset:hover {
+  background-color: #475569;
+}
+
+.btn-ide-executar {
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.2s;
+}
+
+.btn-ide-executar:hover {
+  background-color: #2563eb;
+}
+
+
+/* =========================================
+   ESTILOS DA LIÇÃO 2 (DRAG AND DROP COMPACTO)
+========================================= */
+
+.licao-header-center {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.dnd-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Coluna esquerda menor, direita maior */
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.dnd-title {
+  font-size: 13px;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.dados-soltos-box {
+  border: 1px dashed #334155;
+  border-radius: 12px;
+  padding: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  min-height: 200px;
+  align-content: flex-start;
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+.dnd-item {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 10px 18px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #f8fafc;
+  transition: 0.2s ease;
+  user-select: none;
+}
+
+.dnd-item i {
+  color: #475569;
+  font-size: 14px;
+}
+
+.dnd-item:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+  border-color: #3b82f6;
+}
+
+.dnd-item.small {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.gavetas-area {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Espaço entre as gavetas */
+}
+
+.gaveta {
+  position: relative;
+  border-radius: 12px;
+  min-height: 110px; /* Mais curtas para não precisar scrollar */
+  padding: 30px 20px 20px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  background-color: #0f172a;
+}
+
+.gaveta-placeholder {
+  color: #475569;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.gaveta-label {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  /* Cor de fundo igual ao body para dar o efeito de "corte" na linha */
+  background-color: #0b1120; /* Ajuste para a cor exata do seu fundo principal */
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #f8fafc;
+  border-radius: 4px;
+}
+
+/* Cores Neon das Gavetas baseadas no Figma */
+.gaveta-string { border: 2px solid #00d26a; }
+.gaveta-number { border: 2px solid #a855f7; }
+.gaveta-boolean { border: 2px solid #f97316; }
+
+/* Animação de Erro */
+.gaveta.erro {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* =========================================
+   ESTILOS DA NOVA IDE MODELO 2 (FIGMA SOMA)
+========================================= */
+
+.ide-new-container {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 120px); /* Ajuste pro tamanho da Topbar */
+  padding: 20px;
+  background-color: transparent;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+/* --- PAINEL ESQUERDO: INSTRUÇÕES (roxo) --- */
+.ide-new-sidebar {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.back-arrow {
+    font-size: 20px;
+    cursor: pointer;
+    color: #cbd5e1;
+    margin-bottom: -10px;
+}
+
+.ide-new-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ide-new-title h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.ide-new-box {
+  background-color: #1a2332; /* Cor de fundo escura */
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.ide-new-box.purple {
+    background-color: #131221; /* Cor de fundo arroxeada do Figma */
+}
+
+.ide-new-box h4 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.ide-new-box p, .ide-new-box ol {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.ide-new-box ol {
+    padding-left: 18px;
+}
+
+.ide-new-box ol li {
+    margin-bottom: 8px;
+}
+
+/* --- PAINEL DIREITO: EDITOR E CONSOLE --- */
+.ide-new-main {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ide-panel-header {
+  font-size: 11px;
+  font-weight: bold;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* EDITOR DE CÓDIGO */
+.ide-new-editor-panel {
+  flex: 2; /* Ocupa mais espaço */
+  display: flex;
+  flex-direction: column;
+}
+
+.ide-textarea-wrapper {
+    flex: 1;
+    display: flex;
+    background-color: #1a2332;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.line-numbers {
+    padding: 15px 10px;
+    background-color: #131824; /* Fundo mais escuro pras linhas */
+    color: #475569;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 15px;
+    text-align: right;
+    user-select: none;
+    line-height: 1.5;
+}
+
+.ide-new-textarea {
+  flex: 1;
+  background-color: transparent;
+  border: none;
+  padding: 15px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 15px;
+  color: #cbd5e1; /* Cor do texto (mais claro) */
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+}
+
+.ide-new-textarea::placeholder {
+  color: #6b7280;
+}
+
+/* CONSOLE (Fundo preto total) */
+.ide-new-console-panel {
+  flex: 1; /* Ocupa menos espaço que o editor */
+  display: flex;
+  flex-direction: column;
+}
+
+.ide-new-console {
+  flex: 1;
+  background-color: #000000; /* Preto total igual ao Figma */
+  border-radius: 12px;
+  padding: 15px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 15px;
+  color: #fff;
+  line-height: 1.4;
+  overflow-y: auto; /* Scroll se o texto for grande */
+}
+
+.ide-new-console span {
+  white-space: pre-wrap; /* Mantém as quebras de linha */
+}
+
+.prompt {
+  color: #6b7280; /* Cor do prompt >_ */
+  margin-right: 10px;
+}
+
+/* BOTÕES DE AÇÃO NA DIREITA */
+.ide-new-actions {
+  display: flex;
+  justify-content: flex-end; /* Alinha os botões na direita */
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* Botão reset simples */
+.btn-ide-reset {
+  background-color: #334155;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Botão Executar Azul do Figma */
+.btn-ide-executar-new {
+  background-color: #3b82f6; /* Azul do Figma */
+  color: #fff;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.btn-ide-executar-new:hover {
+  background-color: #2563eb;
+}

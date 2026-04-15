@@ -1,0 +1,111 @@
+.trilha-container {
+  background-color: #0f172a; /* O mesmo Azul Escuro! */
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: white;
+}
+
+.trilha-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.trilha-header h1 {
+  font-size: 36px;
+  margin: 0 0 10px 0;
+}
+
+.trilha-header p {
+  font-size: 18px;
+  color: #7b84a4; /* Azul cinzento */
+  margin: 0;
+}
+
+.trilha-mapa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  gap: 50px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* A Linha Vertical no Fundo */
+.trilha-linha {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  background-color: #212536; /* Cor da linha */
+  border-radius: 10px;
+  z-index: 0;
+}
+
+.trilha-node-wrapper {
+  position: relative;
+  z-index: 1; /* Fica por cima da linha */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 150px;
+}
+
+/* Deslocamento Zig-Zag */
+.left-node { transform: translateX(-40px); }
+.right-node { transform: translateX(40px); }
+
+.trilha-node {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  cursor: pointer;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 0 rgba(0,0,0,0.2); /* Sombra estilo botão de jogo */
+}
+
+.trilha-node:active {
+  transform: translateY(8px);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+/* ESTADOS VISUAIS DA BOLINHA */
+.trilha-node.completed {
+  background-color: #3b82f6; /* Azul vibrante */
+  color: white;
+}
+
+.trilha-node.current {
+  background-color: #3b82f6;
+  color: white;
+  border: 5px solid rgba(59, 130, 246, 0.3); /* Aura em volta da atual */
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 8px 0 rgba(0,0,0,0.2);
+}
+
+.trilha-node.locked {
+  background-color: #212536; /* Cinza escuro da linha */
+  color: #4a506b;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.trilha-node.locked:active {
+  transform: none; /* Não aperta se estiver trancado */
+}
+
+.trilha-label {
+  font-weight: bold;
+  text-align: center;
+  font-size: 15px;
+  color: #e2e8f0;
+}

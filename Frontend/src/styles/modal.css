@@ -1,0 +1,44 @@
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: #1e1e2f; padding: 40px; border-radius: 20px;
+  text-align: center; max-width: 450px; width: 90%;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  /* Animação estilo "pulo" na tela */
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+/* Bordas coloridas para dar destaque */
+.modal-sucesso { border-bottom: 10px solid #4cd137; }
+.modal-erro { border-bottom: 10px solid #e84118; }
+
+.modal-title { color: white; margin-bottom: 10px; font-size: 1.8rem; }
+.modal-message { color: #a4b0be; font-size: 1.1rem; margin-bottom: 25px; }
+
+.modal-icon { font-size: 70px; margin-bottom: 20px; }
+.modal-sucesso .modal-icon { color: #4cd137; text-shadow: 0 0 20px rgba(76, 209, 55, 0.4); }
+.modal-erro .modal-icon { color: #e84118; text-shadow: 0 0 20px rgba(232, 65, 24, 0.4); }
+
+.modal-btn {
+  padding: 15px 30px; border: none; border-radius: 10px;
+  font-size: 1.2rem; font-weight: bold; cursor: pointer; color: white;
+  width: 100%; transition: all 0.2s; text-transform: uppercase;
+}
+
+.modal-sucesso .modal-btn { background-color: #4cd137; }
+.modal-sucesso .modal-btn:hover { background-color: #44bd32; transform: translateY(-2px); }
+
+.modal-erro .modal-btn { background-color: #e84118; }
+.modal-erro .modal-btn:hover { background-color: #c23616; transform: translateY(-2px); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { 
+  from { transform: scale(0.8); opacity: 0; } 
+  to { transform: scale(1); opacity: 1; } 
+}

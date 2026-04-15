@@ -1,0 +1,77 @@
+.topbar-container {
+  background-color: #0f172a; /* Azul Escuro unificado com a Sidebar */
+  border-bottom: 2px solid #1e293b; /* Borda um pouco mais clara */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Adicione a cor vermelha para as vidas, apagando o .tb-badge.fire */
+.tb-badge.heart { 
+  color: #ef4444; 
+  border-color: rgba(239, 68, 68, 0.3); 
+}
+
+.topbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.tb-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.tb-badge.admin { color: #b794f4; border-color: #b794f4; }
+.tb-badge.fire { color: #f6ad55; border-color: rgba(246, 173, 85, 0.3); }
+.tb-badge.gem { color: #63b3ed; border-color: rgba(99, 179, 237, 0.3); }
+
+.tb-badge.level {
+  background-color: #282a36;
+  border-radius: 12px;
+  padding: 8px 20px;
+  border: 1px solid #44475a;
+}
+
+.level-col {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.level-sub {
+  font-size: 11px;
+  color: #a0aec0;
+  font-weight: normal;
+}
+
+.tb-btn-sair {
+  background-color: #ff4757;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tb-btn-sair:hover {
+  background-color: #ff6b81;
+}
