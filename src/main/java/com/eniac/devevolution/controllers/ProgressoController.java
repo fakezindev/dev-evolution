@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/progresso")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class ProgressoController {
 
     @Autowired
