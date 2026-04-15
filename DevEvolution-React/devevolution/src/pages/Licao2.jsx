@@ -30,31 +30,11 @@ function Licao2() {
     isOpen: false, tipo: "", titulo: "", mensagem: "", acaoFechar: () => {}
   })
 
+  // ✅ 1. useEffect Limpo! O LicaoManager já cuida das vidas pra gente.
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!localStorage.getItem("token")) {
       navigate("/login");
-      return;
     }
-
-    // BLOQUEIO DE ENTRADA: Checa as vidas antes de deixar jogar
-    fetch("http://localhost:8080/api/alunos/meu-perfil", {
-      headers: { "Authorization": `Bearer ${token}` }
-    })
-    .then(res => res.json())
-    .then(user => {
-      // Se não tem vida, bloqueia e manda de volta pro mapa
-      if (user.vidasAtuais <= 0) {
-        setModal({
-          isOpen: true,
-          tipo: "erro",
-          titulo: "Energia Esgotada! 💔",
-          mensagem: "Você está com 0 vidas! Volte e refaça a Lição 1 (Hello World) para recuperar sua energia.",
-          acaoFechar: () => navigate("/dashboard") // Expulsa pro mapa
-        });
-      }
-    })
-    .catch(err => console.error(err));
   }, [navigate]);
 
   const handleDragStart = (item) => {
@@ -75,16 +55,20 @@ function Licao2() {
       setErroVisual(true)
       setTimeout(() => setErroVisual(false), 400)
       setDragItem(null)
-      await enviarProgressoParaBackend(false)
+      // O aluno arrastou pra gaveta errada? Toma dano na hora!
+      await enviarProgressoParaBackend(false) 
     }
   }
 
   const finalizarLicao = async () => {
+    // Terminou de arrastar tudo certinho? Vitória!
     await enviarProgressoParaBackend(true)
   }
 
+  // ✅ 2. A Função Universal Definitiva
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
+    
     try {
       const response = await fetch("http://localhost:8080/api/progresso/submeter", {
         method: "POST",
@@ -92,28 +76,27 @@ function Licao2() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify({ desafioId: parseInt(id) || 2, sucesso: sucesso })
+        body: JSON.stringify({
+          desafioId: parseInt(id) || 2, // Garantindo que é a Lição 2
+          sucesso: sucesso
+        })
       })
 
       if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
       const data = await response.json()
-      setCarregando(false)
 
-      // 📢 ADICIONE ESTA LINHA AQUI NA LICAO 2 TAMBÉM!
       window.dispatchEvent(new Event('atualizarPerfil'))
+      setCarregando(false)
 
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          // Se o XP total do aluno aumentou no banco, é vitória inédita. Senão, é revisão.
-          titulo: data.xpTotal > 0 ? "✅ Missão Concluída!" : "💖 Revisão Concluída!",
-          // A mensagem agora vem MASCADA direto do nosso Spring Boot!
+          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
           mensagem: data.mensagem, 
           acaoFechar: () => navigate("/dashboard")
         })
-      // DENTRO DO enviarProgressoParaBackend do Licao2.jsx e Licao3.jsx
       } else {
         const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
 
@@ -122,26 +105,29 @@ function Licao2() {
                 isOpen: true,
                 tipo: "erro",
                 titulo: "Game Over! 💔",
-                mensagem: "Suas vidas acabaram! Você será redirecionado para o mapa. Refaça a Lição 1 para continuar.",
-                acaoFechar: () => navigate("/dashboard") // Expulsa pro mapa
+                mensagem: "Suas vidas acabaram! Refaça a Lição 1 para recuperar sua energia.",
+                acaoFechar: () => navigate("/dashboard")
             });
         } else {
             setModal({
               isOpen: true,
               tipo: "erro",
-              titulo: "❌ Gaveta Errada!", // Ajuste a mensagem conforme a lição
-              mensagem: `Você errou e perdeu 1 coração. Vidas restantes: ${vidasRestantes}`,
+              titulo: "❌ Gaveta Errada!",
+              mensagem: data.mensagem, // Traz o texto direto do Java
               acaoFechar: () => setModal({ ...modal, isOpen: false })
             })
         }
       }
+
     } catch (error) {
       console.error(error)
       setCarregando(false)
+      alert("Erro de conexão com o servidor. Verifique se o banco de dados está rodando!")
     }
   }
 
   return (
+    // ... O seu return (JSX visual) continua exatamente igual, está perfeito!
     <div className="licao-container compact-mode">
       {carregando && <LoadingSpinner mensagem="Salvando progresso..." />}
       <FeedbackModal {...modal} onClose={modal.acaoFechar} />

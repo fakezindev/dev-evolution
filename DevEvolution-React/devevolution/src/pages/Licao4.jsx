@@ -35,7 +35,6 @@ let desconto = 10
   // 📡 backend
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
-
     try {
       const response = await fetch("http://localhost:8080/api/progresso/submeter", {
         method: "POST",
@@ -44,40 +43,55 @@ let desconto = 10
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 4,
-          sucesso
+          desafioId: parseInt(id) || 4, // ⚠️ ATENÇÃO: Mude este número para 1, 2, 3 ou 4 dependendo da tela!
+          sucesso: sucesso
         })
       })
 
-      if (!response.ok) throw new Error("Erro ao registrar progresso")
+      if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
       const data = await response.json()
+
+      // 📢 Avisa o Topbar instantaneamente
+      window.dispatchEvent(new Event('atualizarPerfil'))
       setCarregando(false)
 
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: "💸 Desconto Calculado!",
-          mensagem: data.xpGanho
-            ? "+50 XP! Você entendeu cálculo com variáveis."
-            : "Exercício revisado.",
+          // Título dinâmico baseado na resposta do Java
+          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
+          mensagem: data.mensagem,
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
-        setModal({
-          isOpen: true,
-          tipo: "erro",
-          titulo: "❌ Lógica incorreta",
-          mensagem: "Você perdeu 1 vida. Revise os cálculos.",
-          acaoFechar: () => setModal({ ...modal, isOpen: false })
-        })
-      }
+        // Lógica de Game Over Blindada
+        const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
 
+        if (vidasRestantes <= 0) {
+            setModal({
+                isOpen: true,
+                tipo: "erro",
+                titulo: "Game Over! 💔",
+                mensagem: "Suas vidas acabaram! Refaça a Lição 1 para recuperar sua energia.",
+                acaoFechar: () => navigate("/dashboard")
+            });
+        } else {
+            setModal({
+              isOpen: true,
+              tipo: "erro",
+              titulo: "❌ Lógica Incorreta",
+              mensagem: data.mensagem, // 🗣️ Usa a mensagem de erro direto do Java!
+              acaoFechar: () => setModal({ ...modal, isOpen: false })
+            })
+        }
+      }
     } catch (error) {
       console.error(error)
       setCarregando(false)
-      alert("Erro com servidor.")
+      // Mensagem de alerta melhorada para te ajudar a lembrar do Banco de Dados
+      alert("Erro de conexão com o servidor. Verifique se o Desafio existe no Banco de Dados!")
     }
   }
 

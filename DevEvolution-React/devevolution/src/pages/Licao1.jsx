@@ -23,6 +23,7 @@ function Licao1() {
 
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
+    
     try {
       const response = await fetch("http://localhost:8080/api/progresso/submeter", {
         method: "POST",
@@ -31,54 +32,47 @@ function Licao1() {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 1,
+          desafioId: parseInt(id) || 1, // ⚠️ ATENÇÃO: Mude este número para 1, 2, 3 ou 4 dependendo do arquivo!
           sucesso: sucesso
         })
       })
 
       if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
-      // Lê o JSON UMA ÚNICA VEZ aqui
       const data = await response.json()
+
+      // 📢 DISPARA O EVENTO PARA O TOPBAR ATUALIZAR INSTANTANEAMENTE
+      window.dispatchEvent(new Event('atualizarPerfil'))
       setCarregando(false)
 
-      // 📢 DISPARA O EVENTO PARA O TOPBAR ATUALIZAR
-      window.dispatchEvent(new Event('atualizarPerfil'))
-
       if (sucesso) {
-        // 1. Lê a variável correta que o Java enviou (agora se chama xpTotal no DTO)
-        const ganhouXp = data.xpTotal > 0;
-        
-        // 2. Lógica para saber se ele acabou de renascer!
-        const recuperouVida = !ganhouXp && data.vidasAtuais === 1;
-
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          // Muda o título dinamicamente:
+          // O React só decide o Título:
           titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
-          // Muda a mensagem dinamicamente:
-          mensagem: ganhouXp ? `+50 XP adicionados!` : (recuperouVida ? "Você acertou o código e recuperou 1 coração para continuar!" : "Conteúdo revisado com sucesso."),
+          // O Java manda a mensagem perfeita (Ex: "Você ganhou +50 XP!" ou "Você recuperou 1 coração!")
+          mensagem: data.mensagem, 
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
-        // Tenta ler vidasAtuais ou vidas (fallback caso o Java mande diferente)
         const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
 
         if (vidasRestantes <= 0) {
             setModal({
                 isOpen: true,
                 tipo: "erro",
-                titulo: "💔 Sem Vidas!",
-                mensagem: "Você está com 0 vidas, mas como esta é a fase inicial, você pode continuar tentando até acertar e recuperar 1 coração!",
-                acaoFechar: () => setModal({ ...modal, isOpen: false }) // NÃO USA O NAVIGATE AQUI
+                titulo: "Game Over! 💔",
+                mensagem: "Suas vidas acabaram! Refaça a Lição 1 para recuperar sua energia.",
+                acaoFechar: () => navigate("/dashboard") // Todas as lições expulsam pro mapa no Game Over!
             });
         } else {
             setModal({
               isOpen: true,
               tipo: "erro",
               titulo: "❌ Código Incorreto",
-              mensagem: `Você perdeu 1 coração. Vidas restantes: ${vidasRestantes}`,
+              // O Java manda a mensagem de erro (Ex: "Ops! Código incorreto. Você perdeu 1 vida 💔")
+              mensagem: data.mensagem, 
               acaoFechar: () => setModal({ ...modal, isOpen: false })
             })
         }
@@ -87,7 +81,7 @@ function Licao1() {
     } catch (error) {
       console.error(error)
       setCarregando(false)
-      alert("Erro de conexão com o servidor.")
+      alert("Erro de conexão com o servidor. Verifique se o banco de dados está rodando!")
     }
   }
 
@@ -99,14 +93,14 @@ function Licao1() {
 
     const codigoLimpo = codigo.replace(/\s+/g, '')
     
-    // Aceita aspas simples ou duplas, Hello World ou Olá Mundo
     const acertou = 
       codigoLimpo.includes('console.log("Olá,Mundo!")') || 
-      codigoLimpo.includes('console.log("Olá, mundo!")') ||
+      codigoLimpo.includes('console.log("Olá,mundo!")') || // <-- Espaço removido aqui!
       codigoLimpo.includes("console.log('Olá,Mundo!')") ||
+      codigoLimpo.includes("console.log('Olá,mundo!')") || // <-- Adicionado para cobrir minúsculas com aspas simples
       codigoLimpo.includes('console.log("HelloWorld")') ||
       codigoLimpo.includes("console.log('HelloWorld')")
-
+      
     if (acertou) {
       // Simula o texto aparecendo no console antes de chamar o Java
       setSaida("Olá, Mundo!") 

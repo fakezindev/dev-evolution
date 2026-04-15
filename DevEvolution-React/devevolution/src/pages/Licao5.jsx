@@ -28,12 +28,11 @@ let nota3 = Number(prompt("Nota 3:"))
     isOpen: false, tipo: "", titulo: "", mensagem: "", acaoFechar: () => {}
   })
 
-  // 🔒 segurança
   useEffect(() => {
     if (!localStorage.getItem("token")) navigate("/login")
   }, [navigate])
 
-  // 📡 backend
+  // 📡 A Função Universal Definitiva
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
 
@@ -45,44 +44,56 @@ let nota3 = Number(prompt("Nota 3:"))
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 5,
-          sucesso
+          desafioId: parseInt(id) || 5, // ID 5!
+          sucesso: sucesso
         })
       })
 
-      if (!response.ok) throw new Error("Erro ao registrar progresso")
+      if (!response.ok) throw new Error("Erro ao registrar o progresso")
 
       const data = await response.json()
+
+      window.dispatchEvent(new Event('atualizarPerfil'))
       setCarregando(false)
 
       if (sucesso) {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          titulo: "🎓 Média Calculada!",
-          mensagem: data.xpGanho
-            ? "+50 XP! Você dominou médias."
-            : "Exercício revisado.",
+          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "🎓 Missão Concluída!",
+          mensagem: data.mensagem,
           acaoFechar: () => navigate("/dashboard")
         })
       } else {
-        setModal({
-          isOpen: true,
-          tipo: "erro",
-          titulo: "❌ Código incorreto",
-          mensagem: "Você perdeu 1 vida. Revise o cálculo da média.",
-          acaoFechar: () => setModal({ ...modal, isOpen: false })
-        })
+        const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
+
+        if (vidasRestantes <= 0) {
+            setModal({
+                isOpen: true,
+                tipo: "erro",
+                titulo: "Game Over! 💔",
+                mensagem: "Suas vidas acabaram! Refaça a Lição 1 para recuperar sua energia.",
+                acaoFechar: () => navigate("/dashboard") 
+            });
+        } else {
+            setModal({
+              isOpen: true,
+              tipo: "erro",
+              titulo: "❌ Código Incorreto",
+              mensagem: data.mensagem, 
+              acaoFechar: () => setModal({ ...modal, isOpen: false })
+            })
+        }
       }
 
     } catch (error) {
       console.error(error)
       setCarregando(false)
-      alert("Erro com servidor.")
+      alert("Erro de conexão com o servidor. Verifique se o banco de dados está rodando!")
     }
   }
 
-  // 🧠 validação inteligente
+  // 🧠 Validação e Simulador Dinâmico
   const verificarCodigo = async () => {
     setConsoleOutput("Analisando código...")
 
@@ -96,35 +107,48 @@ let nota3 = Number(prompt("Nota 3:"))
     const temConsole = codigoLimpo.includes("console.log")
 
     if (temNome && temNotas && temMedia && temDivisao && temToFixed && temConsole) {
-
+      
+      // 🚀 SIMULAÇÃO DE EXECUÇÃO REAL
       setTimeout(() => {
-        const nome = "Leo"
-        const nota1 = 7
-        const nota2 = 8
-        const nota3 = 10
+        // Pede os dados dinamicamente igual à Lição 3
+        const inputNome = window.prompt("Simulador DevEvolution:\nDigite o nome do aluno:")
+        if (inputNome === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
 
+        const n1 = window.prompt("Simulador DevEvolution:\nDigite a Nota 1:")
+        if (n1 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+
+        const n2 = window.prompt("Simulador DevEvolution:\nDigite a Nota 2:")
+        if (n2 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+
+        const n3 = window.prompt("Simulador DevEvolution:\nDigite a Nota 3:")
+        if (n3 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+
+        // Converte as notas e calcula a média na hora
+        const nota1 = Number(n1)
+        const nota2 = Number(n2)
+        const nota3 = Number(n3)
         const media = ((nota1 + nota2 + nota3) / 3).toFixed(2)
 
         setConsoleOutput(
-`> nome = ${nome}
+`> let nome = "${inputNome}";
 > notas = ${nota1}, ${nota2}, ${nota3}
-> media = ${media}
+> let media = (n1 + n2 + n3) / 3;
 
-"A média final do aluno ${nome} é ${media}"`
+"A média final de ${inputNome} é ${media}"`
         )
 
         enviarProgressoParaBackend(true)
       }, 500)
 
     } else {
-      let erro = "Erro:\n"
+      let erro = "Erro de Lógica ou Sintaxe:\n"
 
       if (!temNome) erro += "- Crie a variável nome\n"
       if (!temNotas) erro += "- Crie as 3 notas\n"
       if (!temMedia) erro += "- Crie a variável media\n"
-      if (!temDivisao) erro += "- Divida por 3\n"
-      if (!temToFixed) erro += "- Use toFixed(2)\n"
-      if (!temConsole) erro += "- Use console.log\n"
+      if (!temDivisao) erro += "- Divida por 3 na variável da média\n"
+      if (!temToFixed) erro += "- Use .toFixed(2) no console.log\n"
+      if (!temConsole) erro += "- Exiba o resultado com console.log\n"
 
       setConsoleOutput(erro)
       await enviarProgressoParaBackend(false)
@@ -200,7 +224,7 @@ let nota3 = Number(prompt("Nota 3:"))
           </div>
 
           <div className="ide-new-console">
-            <span className="prompt">&gt;_</span>
+            <span className="prompt">&gt;_</span> {consoleOutput}
           </div>
         </div>
 
@@ -209,8 +233,12 @@ let nota3 = Number(prompt("Nota 3:"))
             Resetar
           </button>
 
-          <button className="btn-ide-executar-new" onClick={verificarCodigo}>
-            ▶ Executar
+          <button 
+            className="btn-ide-executar-new" 
+            onClick={verificarCodigo}
+            disabled={carregando}
+          >
+            ▶ {carregando ? "Validando..." : "Executar"}
           </button>
         </div>
 
