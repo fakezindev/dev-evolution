@@ -55,9 +55,15 @@ public class SeederConfig implements CommandLineRunner {
             mundo1.setOrdem(1);
             mundo1.setTrilha(trilhaJs);
 
+            Mundo mundo2 = new Mundo();
+            mundo2.setTitulo("Mundo 2: Estruturas condicionais");
+            mundo2.setOrdem(2);
+            mundo2.setTrilha(trilhaJs);
+
 
 
             mundoRepository.save(mundo1);
+            mundoRepository.save(mundo2);
 
             // 3. Cadastrando as 5 Lições Oficiais!
 
@@ -100,7 +106,7 @@ public class SeederConfig implements CommandLineRunner {
             // A ordem aqui dita os IDs gerados pelo banco (1, 2, 3, 4, 5)
             desafioRepository.saveAll(Arrays.asList(desafio1, desafio2, desafio3, desafio4, desafio5));
 
-            System.out.println("✅ Todas as 5 Lições foram criadas no banco de dados!");
+            System.out.println("✅ Mundos criados!");
         }
     }
 }
