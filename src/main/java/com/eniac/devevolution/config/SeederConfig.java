@@ -134,11 +134,18 @@ public class SeederConfig implements CommandLineRunner {
             desafio9.setXpRecompensa(200);
             desafio9.setMundo(mundo2);
 
+            Desafio desafio10 = new Desafio();
+            desafio10.setTitulo("");
+            desafio10.setDescricaoMarkdown("");
+            desafio10.setCodigoInicial("");
+            desafio10.setXpRecompensa(300);
+            desafio10.setMundo(mundo2);
+
 
 
 
             // A ordem aqui dita os IDs gerados pelo banco (1, 2, 3, 4, 5)
-            desafioRepository.saveAll(Arrays.asList(desafio1, desafio2, desafio3, desafio4, desafio5, desafio6, desafio7, desafio8, desafio9));
+            desafioRepository.saveAll(Arrays.asList(desafio1, desafio2, desafio3, desafio4, desafio5, desafio6, desafio7, desafio8, desafio9, desafio10));
 
             System.out.println("✅ Mundos criados!");
         }
