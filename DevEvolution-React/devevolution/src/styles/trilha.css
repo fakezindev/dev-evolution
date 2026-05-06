@@ -73,6 +73,10 @@
   transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 8px 0 rgba(0,0,0,0.2); /* Sombra estilo botão de jogo */
 }
+.trilha-node:hover{
+  scale: 1.05;
+  transition: 0.3s;
+}
 
 .trilha-node:active {
   transform: translateY(8px);
@@ -83,13 +87,23 @@
 .trilha-node.completed {
   background-color: #3b82f6; /* Azul vibrante */
   color: white;
+  box-shadow: 0 0 20px  rgba(40, 176, 54, 0.5);
+  transition: 0.2s;
+}
+.trilha-node.completed:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  transition: 0.2s;
 }
 
 .trilha-node.current {
   background-color: #3b82f6;
   color: white;
   border: 5px solid rgba(59, 130, 246, 0.3); /* Aura em volta da atual */
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 8px 0 rgba(0,0,0,0.2);
+ 
+}
+.trilha-node.current:hover{
+ box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+ transition: 0.3s;
 }
 
 .trilha-node.locked {
@@ -97,6 +111,13 @@
   color: #4a506b;
   cursor: not-allowed;
   box-shadow: none;
+  transition: 0.3s;
+}
+.trilha-node.locked:hover {
+  box-shadow: 0 0 20px rgba(96, 96, 96, 0.5);
+  scale: 1;
+  transition: 0.3s;
+
 }
 
 .trilha-node.locked:active {
