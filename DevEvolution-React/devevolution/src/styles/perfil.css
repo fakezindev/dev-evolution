@@ -95,7 +95,7 @@
   background-color: rgb(238, 255, 0);
   border-radius: 5px;
   transition: 0.6s;
-  box-shadow: 1px 1px 1px rgb(255, 255, 255);
+  box-shadow: 1px 1px 10px rgba(255, 255, 255, 0.301);
 
   }
   .reset:hover{
