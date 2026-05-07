@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import "../styles/perfil.css" 
+import "../styles/perfil.css"
+import "../styles/ligas.css"
 
 function Ligas() {
   const navigate = useNavigate()
@@ -69,14 +70,8 @@ function Ligas() {
         <p className="subtitle">Suba de nível, acumule XP e alcance o rank Mestre!</p>
         
         {/* BOTÃO DE EXPLICAÇÃO */}
-        <button 
-          onClick={() => setModalAberto(true)}
-          style={{
-            background: "#3e3e4e", color: "#fff", border: "none",
-            padding: "8px 15px", borderRadius: "8px", cursor: "pointer",
-            marginTop: "10px", fontWeight: "bold", transition: "0.2s"
-          }}
-        >
+        <button className="bt-explicacao"
+          onClick={() => setModalAberto(true)}>
           <i className="fa-solid fa-circle-info"></i> Como funcionam as Ligas?
         </button>
       </div>

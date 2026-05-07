@@ -65,3 +65,18 @@
     margin:0;
     color:#4cc2ff;
   }
+  .bt-explicacao{
+    background: #3e3e4e; 
+    color: #fff;
+    border: "none";
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: "pointer";
+    margin-top: 10px ; 
+    font-weight: "bold";
+    transition: 0.2s;
+  }
+  .bt-explicacao:hover{
+    transition: 0.2s;
+    scale: 1.05;
+  }
