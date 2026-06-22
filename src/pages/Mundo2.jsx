@@ -31,49 +31,56 @@ const textAreaRef = useRef<HTMLTextAreaElement>(null);
 useEffect(() => { textAreaRef.current?.focus(); }, []);
 
 const handleRun = () => {
-    if (isRunning) return;
-    setIsRunning(true);
-    setShowError(false);
-    setLogs([]);
-
-    const capturedLogs = [];
-    const somar = (a, b) => {
-        return a + b;
-};
-    capturedLogs.push({ type: 'log', text: args.join(' ') });
-}; 
-    try {
-const runner = new Function('console', code);
-runner({ log: mockConsoleLog });
-
-setLogs([...capturedLogs]);
-
-const allText = capturedLogs.map(l => l.text).join(' ');
-const codeStr = code.toLowerCase();
-
-      // ======= SUA VALIDAÇÃO AQUI =======
-if (!codeStr.includes('let')) {
-        setErrorMessage('⚠️ Você precisa usar X no seu código!');
-        setShowError(true);
-        setTimeout(() => setShowError(false), 4000);
-} else if (allText.includes('resultado_esperado')) {
-        setTimeout(() => setShowSuccess(true), 800);
-} else {
-        setErrorMessage('⚠️ O resultado não está certo ainda. Tente novamente!');
-        setShowError(true);
-        setTimeout(() => setShowError(false), 4000);
-}
-      // ==================================
-
-    } catch (e) {
-capturedLogs.push({ type: 'error', text: e.toString() });
-setLogs([...capturedLogs]);
-setErrorMessage('⚠️ Erro de sintaxe no código. Verifique e tente novamente.');
-setShowError(true);
-setTimeout(() => setShowError(false), 4000);
-    }
-
-    setIsRunning(false);
+        if (isRunning) return;
+        setIsRunning(true);
+        setShowError(false);
+        setLogs([]);
+    
+        const capturedLogs = [];
+    
+        // 1. Criamos a função que vai capturar o console.log do aluno
+        const mockConsoleLog = (...args) => {
+            capturedLogs.push({ type: 'log', text: args.join(' ') });
+        };
+    
+        try {
+            // 2. Criamos uma função dinâmica passando o "console" fictício para ela
+            const runner = new Function('console', code);
+            
+            // 3. Executamos o código do aluno injetando o nosso mockConsoleLog
+            runner({ log: mockConsoleLog });
+    
+            // 4. Atualizamos o estado dos logs para aparecer na tela
+            setLogs([...capturedLogs]);
+    
+            const allText = capturedLogs.map(l => l.text).join(' ');
+            const codeStr = code.toLowerCase();
+    
+            // ======= SUA VALIDAÇÃO AQUI =======
+            if (!codeStr.includes('if')) {
+                setErrorMessage('⚠️ Você precisa usar X no seu código!');
+                setShowError(true);
+                setTimeout(() => setShowError(false), 4000);
+            } else if (allText.includes('resultado_esperado')) {
+                setTimeout(() => setShowSuccess(true), 800);
+            } else {
+                setErrorMessage('⚠️ O resultado não está certo ainda. Tente novamente!');
+                setShowError(true);
+                setTimeout(() => setShowError(false), 4000);
+            }
+            // ==================================
+    
+        } catch (e) {
+            // Se o código do aluno tiver erro de sintaxe, o JavaScript cai aqui
+            capturedLogs.push({ type: 'error', text: e.toString() });
+            setLogs([...capturedLogs]);
+            setErrorMessage('⚠️ Erro de sintaxe no código. Verifique e tente novamente.');
+            setShowError(true);
+            setTimeout(() => setShowError(false), 4000);
+        }
+    
+        setIsRunning(false);
+    };
 };
 
 const handleNext = () => {
