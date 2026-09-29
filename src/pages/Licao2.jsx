@@ -118,7 +118,7 @@ function Licao2() {
               tipo: "erro",
               titulo: "❌ Gaveta Errada!",
               mensagem: data.mensagem, // Traz o texto direto do Java
-              acaoFechar: () => setModal({ ...modal, isOpen: false })
+              acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
             })
         }
       }

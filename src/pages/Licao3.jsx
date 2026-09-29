@@ -75,7 +75,7 @@ function Licao3() {
           tipo: "erro",
           titulo: "❌ Lógica Incorreta",
           mensagem: "Você perdeu 1 Vida. Verifique se seguiu todos os passos e usou Number() para converter o texto.",
-          acaoFechar: () => setModal({ ...modal, isOpen: false })
+          acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
         })
       }
     } catch (error) {

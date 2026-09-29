@@ -85,7 +85,7 @@ let nota3 = Number(prompt("Nota 3:"))
               tipo: "erro",
               titulo: "❌ Código Incorreto",
               mensagem: data.mensagem, 
-              acaoFechar: () => setModal({ ...modal, isOpen: false })
+              acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
             })
         }
       }

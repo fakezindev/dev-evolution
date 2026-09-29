@@ -10,19 +10,34 @@ function Topbar() {
     // 1. Criamos a função que busca os dados atualizados
     const carregarDados = () => {
       const token = localStorage.getItem("token")
-      if (token) {
-        fetch("http://localhost:8080/api/alunos/meu-perfil", {
-          headers: { "Authorization": `Bearer ${token}` }
-        })
-        .then(res => res.json())
-        .then(data => {
-          setUsuario(data)
-          if (data.aceitouManual === false) {
-            navigate("/manual-conduta")
-          }
-        })
-        .catch(err => console.error(err))
-      }
+      if (!token) return
+
+      fetch("http://localhost:8080/api/alunos/meu-perfil", {
+        headers: { "Authorization": `Bearer ${token}` }
+      })
+      .then(res => {
+        // Se o token expirou ou é inválido, desloga o usuário corretamente
+        if (res.status === 401 || res.status === 403) {
+          console.warn("Topbar: token expirado. Redirecionando para login...")
+          localStorage.removeItem("token")
+          localStorage.removeItem("auth")
+          navigate("/login")
+          return null
+        }
+        if (!res.ok) {
+          console.error("Topbar: erro inesperado ao buscar perfil:", res.status)
+          return null
+        }
+        return res.json()
+      })
+      .then(data => {
+        if (!data) return // saiu cedo por erro acima
+        setUsuario(data)
+        if (data.aceitouManual === false) {
+          navigate("/manual-conduta")
+        }
+      })
+      .catch(err => console.error("Topbar: falha de rede ao buscar perfil:", err))
     }
 
     // 2. Chama a função logo que a tela carrega (comportamento normal)
@@ -33,7 +48,7 @@ function Topbar() {
 
     // 4. Limpeza de segurança quando o componente for desmontado
     return () => window.removeEventListener('atualizarPerfil', carregarDados)
-  }, [])
+  }, [navigate])
 
   const logout = () => {
     localStorage.clear()

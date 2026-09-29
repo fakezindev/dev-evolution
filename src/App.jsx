@@ -30,8 +30,6 @@ function Layout({ children }) {
 }
 
 function App() {
-  // ATENÇÃO: Variável simulando o progresso (futuramente virá do banco MySQL)
-  const alunoTerminouMundo1 = false;
 
   return (
     <Routes>
@@ -73,7 +71,7 @@ function App() {
         path="/mundo2" 
         element={
           <PrivateRoute>
-            <RotaProtegida mundo1Concluido={alunoTerminouMundo1}>
+            <RotaProtegida>
               <Layout>
                 <Mundo2 />
               </Layout>

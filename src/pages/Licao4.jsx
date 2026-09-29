@@ -87,7 +87,7 @@ let desconto = 10
               tipo: "erro",
               titulo: "❌ Lógica Incorreta",
               mensagem: data.mensagem, // 🗣️ Usa a mensagem de erro direto do Java!
-              acaoFechar: () => setModal({ ...modal, isOpen: false })
+              acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
             })
         }
       }

@@ -77,7 +77,7 @@ function Licao1() {
               titulo: "❌ Código Incorreto",
               // O Java manda a mensagem de erro (Ex: "Ops! Código incorreto. Você perdeu 1 vida 💔")
               mensagem: data.mensagem, 
-              acaoFechar: () => setModal({ ...modal, isOpen: false })
+              acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
             })
         }
       }

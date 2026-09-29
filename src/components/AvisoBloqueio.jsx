@@ -10,8 +10,8 @@ const AvisoBloqueio = () => {
       <p>
         Continue sua jornada e conclua todos os desafios do Mundo 1 para desbloquear essa nova aventura. Você consegue! 🚀
       </p>
-      <Link to="/mundo1">
-        <button className="btn-voltar">Voltar aos Desafios do Mundo 1</button>
+      <Link to="/dashboard">
+        <button className="btn-voltar">Voltar ao Mapa</button>
       </Link>
     </div>
   );
