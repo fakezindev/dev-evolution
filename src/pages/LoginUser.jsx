@@ -1,6 +1,7 @@
-import "../styles/login.css"
+﻿import "../styles/login.css"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { API_BASE_URL } from "../api/config"
 
 function LoginUser() {
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ function LoginUser() {
 
     try {
       // Bate na porta do Spring Boot para validar as credenciais
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,7 +46,7 @@ function LoginUser() {
       localStorage.setItem("auth", "true")
 
       // Busca o perfil para ver se aceitou o manual
-      const perfilRes = await fetch("http://localhost:8080/api/alunos/meu-perfil", {
+      const perfilRes = await fetch(`${API_BASE_URL}/api/alunos/meu-perfil`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       

@@ -1,132 +1,343 @@
+/* ==========================================================
+   DevEvolution - Trilha / Dashboard Styles (Modern Gaming UI)
+   ========================================================== */
+
 .trilha-container {
-  background-color: #0f172a; /* O mesmo Azul Escuro! */
-  min-height: calc(100vh - 80px);
+  background: radial-gradient(circle at 50% 10%, #172448 0%, #0b1329 70%, #060a17 100%);
+  min-height: calc(100vh - 70px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  color: white;
-}
-
-.trilha-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.trilha-header h1 {
-  font-size: 36px;
-  margin: 0 0 10px 0;
-}
-
-.trilha-header p {
-  font-size: 18px;
-  color: #7b84a4; /* Azul cinzento */
-  margin: 0;
-}
-
-.trilha-mapa {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 40px 24px 80px;
+  color: #e2e8f0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   position: relative;
-  gap: 50px;
-  width: 100%;
-  max-width: 400px;
+  overflow-x: hidden;
 }
 
-/* A Linha Vertical no Fundo */
-.trilha-linha {
+/* Ambient Glow */
+.trilha-bg-glow {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  background-color: #212536; /* Cor da linha */
-  border-radius: 10px;
+  width: 700px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.08) 50%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
   z-index: 0;
 }
 
-.trilha-node-wrapper {
+/* Hero Banner */
+.trilha-hero-banner {
   position: relative;
-  z-index: 1; /* Fica por cima da linha */
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  width: 150px;
+  text-align: center;
+  margin-bottom: 32px;
+  max-width: 650px;
+  width: 100%;
 }
 
-/* Deslocamento Zig-Zag */
-.left-node { transform: translateX(-40px); }
-.right-node { transform: translateX(40px); }
+.trilha-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: #c084fc;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
 
-.trilha-node {
-  width: 90px;
-  height: 90px;
+.trilha-hero-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.trilha-hero-desc {
+  font-size: 15px;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+/* World Selector Tabs */
+.trilha-mundos-tabs {
+  display: flex;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 10;
+  max-width: 650px;
+  width: 100%;
+  justify-content: center;
+}
+
+.mundo-tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.mundo-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f1f5f9;
+}
+
+.mundo-tab-btn.active {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+}
+
+.mundo-tab-sub {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+/* Exercise Map Track */
+.trilha-mapa {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  width: 100%;
+  max-width: 680px;
+  margin-top: 10px;
+}
+
+/* Vertical Laser Line */
+.trilha-linha {
+  position: absolute;
+  top: 30px;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  background: linear-gradient(180deg, #a855f7 0%, #3b82f6 50%, #10b981 100%);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+  z-index: 0;
+}
+
+/* Node Wrappers & Alignments */
+.trilha-node-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.left-node {
+  flex-direction: row-reverse;
+  padding-right: 50%;
+}
+
+.right-node {
+  flex-direction: row;
+  padding-left: 50%;
+}
+
+/* Circle Node */
+.trilha-node-circle {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 36px;
+  justify-content: center;
+  font-size: 26px;
   cursor: pointer;
-  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 8px 0 rgba(0,0,0,0.2); /* Sombra estilo botão de jogo */
-}
-.trilha-node:hover{
-  scale: 1.05;
-  transition: 0.3s;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  flex-shrink: 0;
+  position: relative;
+  border: 3px solid transparent;
 }
 
-.trilha-node:active {
-  transform: translateY(8px);
-  box-shadow: 0 0 0 rgba(0,0,0,0);
+.trilha-node-circle:hover {
+  transform: scale(1.12);
 }
 
-/* ESTADOS VISUAIS DA BOLINHA */
-.trilha-node.completed {
-  background-color: #3b82f6; /* Azul vibrante */
-  color: white;
-  box-shadow: 0 0 20px  rgba(40, 176, 54, 0.5);
-  transition: 0.2s;
-}
-.trilha-node.completed:hover {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-  transition: 0.2s;
+/* Node States */
+.trilha-node-circle.completed {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  border-color: #34d399;
+  color: #ffffff;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.4), inset 0 2px 2px rgba(255, 255, 255, 0.3);
 }
 
-.trilha-node.current {
-  background-color: #3b82f6;
-  color: white;
-  border: 5px solid rgba(59, 130, 246, 0.3); /* Aura em volta da atual */
- 
-}
-.trilha-node.current:hover{
- box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
- transition: 0.3s;
+.trilha-node-circle.current {
+  background: linear-gradient(135deg, #6d28d9 0%, #a855f7 100%);
+  border-color: #c084fc;
+  color: #ffffff;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.6), inset 0 2px 2px rgba(255, 255, 255, 0.4);
+  animation: pulseCurrent 2s ease-in-out infinite;
 }
 
-.trilha-node.locked {
-  background-color: #212536; /* Cinza escuro da linha */
-  color: #4a506b;
+@keyframes pulseCurrent {
+  0%, 100% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); }
+  50% { box-shadow: 0 0 45px rgba(168, 85, 247, 0.8), 0 0 10px #ffffff; }
+}
+
+.trilha-node-circle.boss {
+  background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+  border-color: #fbbf24;
+  color: #ffffff;
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.6), inset 0 2px 2px rgba(255, 255, 255, 0.4);
+  animation: pulseBoss 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseBoss {
+  from { transform: scale(1); box-shadow: 0 0 30px rgba(245, 158, 11, 0.5); }
+  to { transform: scale(1.1); box-shadow: 0 0 50px rgba(245, 158, 11, 0.8), 0 0 15px #fbbf24; }
+}
+
+.trilha-node-circle.locked {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #475569;
   cursor: not-allowed;
   box-shadow: none;
-  transition: 0.3s;
-}
-.trilha-node.locked:hover {
-  box-shadow: 0 0 20px rgba(96, 96, 96, 0.5);
-  scale: 1;
-  transition: 0.3s;
-
 }
 
-.trilha-node.locked:active {
-  transform: none; /* Não aperta se estiver trancado */
+.trilha-node-circle.locked:hover {
+  transform: none;
 }
 
-.trilha-label {
-  font-weight: bold;
-  text-align: center;
-  font-size: 15px;
-  color: #e2e8f0;
+/* Glass Card Info */
+.trilha-card-info {
+  background: rgba(19, 31, 58, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 18px;
+  width: 210px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.trilha-node-wrapper:hover .trilha-card-info {
+  border-color: rgba(168, 85, 247, 0.35);
+  transform: translateY(-2px);
+  background: rgba(24, 38, 71, 0.95);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.trilha-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.trilha-card-fase {
+  font-size: 11px;
+  font-weight: 800;
+  color: #a855f7;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.trilha-card-fase.boss-tag {
+  color: #fbbf24;
+}
+
+.trilha-card-xp {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+}
+
+.trilha-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  line-height: 1.35;
+}
+
+.trilha-card-btn {
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trilha-card-btn.completed-text {
+  color: #34d399;
+}
+
+.trilha-card-btn.locked-text {
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .trilha-container {
+    padding: 24px 16px 60px;
+  }
+
+  .left-node, .right-node {
+    padding-left: 0;
+    padding-right: 0;
+    flex-direction: row;
+  }
+
+  .trilha-linha {
+    left: 36px;
+  }
+
+  .trilha-node-wrapper {
+    max-width: 100%;
+    padding-left: 0;
+  }
+
+  .trilha-card-info {
+    width: 100%;
+  }
 }

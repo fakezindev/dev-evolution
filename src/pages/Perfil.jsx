@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/perfil.css"
+import { obterLiga } from "../utils/ligas"
+import { API_BASE_URL } from "../api/config"
 
 function Perfil() {
   const navigate = useNavigate()
@@ -21,7 +23,7 @@ function Perfil() {
 
     const carregarDadosDoBanco = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/alunos/meu-perfil", {
+        const response = await fetch(`${API_BASE_URL}/api/alunos/meu-perfil`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -69,14 +71,13 @@ function Perfil() {
 
       // 2. Envia a String gigante para o Java guardar no Banco de Dados!
       try {
-        await fetch("http://localhost:8080/api/alunos/atualizar-foto", {
-          method: "PUT", // ou PATCH, dependendo de como você criar a rota
+        await fetch(`${API_BASE_URL}/api/alunos/atualizar-foto`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           },
-          // Mandamos um JSON com o campo que o seu DTO/Entidade espera
-          body: JSON.stringify({ fotoPerfil: base64String }) 
+          body: JSON.stringify({ fotoPerfil: base64String })
         })
       } catch (error) {
         console.error("Erro ao salvar foto no backend:", error)
@@ -108,8 +109,8 @@ function Perfil() {
     // 2. Se ele clicou em "OK" (confirmou)
     if (confirmacao) {
       try {
-        const response = await fetch("http://localhost:8080/api/progresso/resetar", {
-          method: "DELETE", // Usamos DELETE por ser uma ação destrutiva
+        const response = await fetch(`${API_BASE_URL}/api/progresso/resetar`, {
+          method: "DELETE",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }
@@ -169,7 +170,7 @@ function Perfil() {
                  setUsuario({...usuario, corPersonalizada: novaCor});
                  
                  try {
-                   await fetch("http://localhost:8080/api/alunos/atualizar-cor", {
+                   await fetch(`${API_BASE_URL}/api/alunos/atualizar-cor`, {
                      method: "PUT",
                      headers: {
                        "Content-Type": "application/json",
@@ -200,7 +201,8 @@ function Perfil() {
       <div className="stats-grid">        
         <div className="stat-card frequency">
           <i className="fa-solid fa-fire"></i>
-          <h3>3</h3>
+          {/* ofensiva ainda não vem do backend — exibe 0 até o campo existir na API */}
+          <h3>{usuario.ofensiva ?? 0}</h3>
           <p>Ofensiva</p>
         </div>
 
@@ -212,13 +214,13 @@ function Perfil() {
 
         <div className="stat-card diamond">
           <i className="fa-solid fa-gem"></i>
-          <h3>{usuario.gemas !== undefined ? usuario.gemas : 0}</h3>
+          <h3>{usuario.gemas ?? 0}</h3>
           <p>Gemas</p>
         </div>
 
-        <div className="stat-card">
-          <i className="fa-solid fa-shield"></i>
-          <h3>Prata</h3>
+        <div className="stat-card" style={{ color: obterLiga(usuario.xpTotal).cor }}>
+          <i className={`fa-solid ${obterLiga(usuario.xpTotal).icone}`}></i>
+          <h3>{obterLiga(usuario.xpTotal).nome}</h3>
           <p>Liga</p>
         </div>
       </div>

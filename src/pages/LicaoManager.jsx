@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../api/config";
 
 // Importações das Lições
 import Licao1 from "./Licao1";
@@ -25,33 +26,19 @@ function LicaoManager() {
   });
 
   useEffect(() => {
-    const carregarStatus = async () => {
+    const verificarVidas = async () => {
       const token = localStorage.getItem("token");
-      
-      // Proteção extra: se não tiver token, joga pro login
-      if (!token) {
-        navigate("/login");
-        return;
-      }
 
       try {
-        const res = await fetch("http://localhost:8080/api/alunos/meu-perfil", {
+        const res = await fetch(`${API_BASE_URL}/api/alunos/meu-perfil`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
         
-        if (res.status === 401 || res.status === 403) {
-            console.warn("Token expirado. Deslogando usuário...");
-            localStorage.removeItem("token"); // Apaga a chave velha
-            navigate("/login"); // Joga pra fora
-            return;
-        }
+        if (!res.ok) return; // Se der erro, deixa o PrivateRoute tratar
 
-        if (!res.ok) throw new Error("Erro ao buscar perfil");
-        
         const user = await res.json();
 
-        // 3. Corrigido: A REGRA DA CURA (Game Design)
-        // Só bloqueia se ele estiver com 0 vidas E a lição NÃO for a Lição 1!
+        // Bloqueia se 0 vidas, EXCETO na Lição 1 (que é o mecanismo de recuperação)
         if (user.vidasAtuais <= 0 && id !== "1") {
              setModal({
                 isOpen: true,
@@ -66,8 +53,8 @@ function LicaoManager() {
       }
     };
     
-    carregarStatus();
-  }, [id, navigate]); // Adicionado as dependências no useEffect
+    verificarVidas();
+  }, [id, navigate]);
 
   // Função auxiliar para renderizar a lição correta
   const renderizarLicao = () => {

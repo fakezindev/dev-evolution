@@ -3,15 +3,16 @@ import { useNavigate, useParams } from "react-router-dom"
 import "../styles/licao.css"
 import LoadingSpinner from "../components/LoadingSpinner"
 import FeedbackModal from "../components/FeedbackModal"
+import { API_BASE_URL } from "../api/config"
 
 function Licao3() {
-  // O código inicial agora é apenas um esqueleto de comentários!
-  const codeScaffold = `// 1. Peça o primeiro número
+  // O cÃ³digo inicial agora Ã© apenas um esqueleto de comentÃ¡rios!
+  const codeScaffold = `// 1. PeÃ§a o primeiro nÃºmero
 // Dica: Use Number(prompt(...))
 
-// 2. Peça o segundo número
+// 2. PeÃ§a o segundo nÃºmero
 
-// 3. Some os dois e guarde na variável 'soma'
+// 3. Some os dois e guarde na variÃ¡vel 'soma'
 
 // 4. Mostre o resultado no console com console.log(soma)
 
@@ -28,16 +29,16 @@ function Licao3() {
     isOpen: false, tipo: "", titulo: "", mensagem: "", acaoFechar: () => {}
   })
 
-  // 🚫 SEGURANÇA
+  // ðŸš« SEGURANÃ‡A
   useEffect(() => {
     if (!localStorage.getItem("token")) navigate("/login")
   }, [navigate])
 
-  // 📡 COMUNICAÇÃO COM O JAVA
+  // ðŸ“¡ COMUNICAÃ‡ÃƒO COM O JAVA
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
     try {
-      const response = await fetch("http://localhost:8080/api/progresso/submeter", {
+      const response = await fetch(`${API_BASE_URL}/api/progresso/submeter`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,8 +61,8 @@ function Licao3() {
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          // Se o XP total do aluno aumentou no banco, é vitória inédita. Senão, é revisão.
-          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
+          // Se o XP total do aluno aumentou no banco, Ã© vitÃ³ria inÃ©dita. SenÃ£o, Ã© revisÃ£o.
+          titulo: data.mensagem.includes("RevisÃ£o") ? "ðŸ’– RevisÃ£o ConcluÃ­da!" : "âœ… MissÃ£o ConcluÃ­da!",
           // A mensagem agora vem MASCADA direto do nosso Spring Boot!
           mensagem: data.mensagem, 
           acaoFechar: () => {
@@ -73,41 +74,41 @@ function Licao3() {
         setModal({
           isOpen: true,
           tipo: "erro",
-          titulo: "❌ Lógica Incorreta",
-          mensagem: "Você perdeu 1 Vida. Verifique se seguiu todos os passos e usou Number() para converter o texto.",
+          titulo: "âŒ LÃ³gica Incorreta",
+          mensagem: "VocÃª perdeu 1 Vida. Verifique se seguiu todos os passos e usou Number() para converter o texto.",
           acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
         })
       }
     } catch (error) {
       console.error(error)
       setCarregando(false)
-      alert("Erro de conexão com o servidor.")
+      alert("Erro de conexÃ£o com o servidor.")
     }
   }
 
-  // 🎯 LÓGICA DA CALCULADORA DINÂMICA (Simulador mais rigoroso)
+  // ðŸŽ¯ LÃ“GICA DA CALCULADORA DINÃ‚MICA (Simulador mais rigoroso)
   const verificarECalcular = async () => {
-    setConsoleOutput("Analisando código...")
+    setConsoleOutput("Analisando cÃ³digo...")
     
-    // Remove todos os espaços e comentários em linha para facilitar a validação flexível
+    // Remove todos os espaÃ§os e comentÃ¡rios em linha para facilitar a validaÃ§Ã£o flexÃ­vel
     const codigoLimpo = codigo.replace(/(\/\*.*\*\/|\/\/.*|\s+)/g, '') 
     
-    // Validação Inteligente: Verifica se as palavras-chave da lógica JS estão presentes
+    // ValidaÃ§Ã£o Inteligente: Verifica se as palavras-chave da lÃ³gica JS estÃ£o presentes
     const usouPrompt = codigoLimpo.includes('prompt(')
     const usouNumber = codigoLimpo.includes('Number(') || codigoLimpo.includes('parseInt(') || codigoLimpo.includes('parseFloat(')
     const somouVariaveis = codigoLimpo.includes('soma=a+b') || codigoLimpo.includes('soma=b+a')
     const mostrouConsole = codigoLimpo.includes('console.log(soma)')
 
-    // O aluno precisa ter feito a lógica completa
+    // O aluno precisa ter feito a lÃ³gica completa
     if (usouPrompt && usouNumber && somouVariaveis && mostrouConsole) {
       
-      // 🚀 SIMULAÇÃO DE EXECUÇÃO REAL
+      // ðŸš€ SIMULAÃ‡ÃƒO DE EXECUÃ‡ÃƒO REAL
       setTimeout(() => {
-        const n1 = window.prompt("Simulador DevEvolution:\nDigite o primeiro número:")
-        if (n1 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+        const n1 = window.prompt("Simulador DevEvolution:\nDigite o primeiro nÃºmero:")
+        if (n1 === null) { setConsoleOutput("ExecuÃ§Ã£o cancelada pelo usuÃ¡rio."); return; } 
         
-        const n2 = window.prompt("Simulador DevEvolution:\nDigite o segundo número:")
-        if (n2 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+        const n2 = window.prompt("Simulador DevEvolution:\nDigite o segundo nÃºmero:")
+        if (n2 === null) { setConsoleOutput("ExecuÃ§Ã£o cancelada pelo usuÃ¡rio."); return; } 
 
         const inputA = Number(n1);
         const inputB = Number(n2);
@@ -119,11 +120,11 @@ function Licao3() {
 
     } else {
       // Feedback para ajudar o aluno a descobrir onde errou
-      let msgErro = "Erro de Sintaxe ou Lógica:\n"
-      if (!usouPrompt) msgErro += "- Você esqueceu de usar o comando prompt().\n"
-      if (!usouNumber) msgErro += "- Você esqueceu de converter o texto para número com Number().\n"
-      if (!somouVariaveis) msgErro += "- Você não criou a variável 'soma' recebendo a + b.\n"
-      if (!mostrouConsole) msgErro += "- Você não exibiu o resultado com console.log(soma)."
+      let msgErro = "Erro de Sintaxe ou LÃ³gica:\n"
+      if (!usouPrompt) msgErro += "- VocÃª esqueceu de usar o comando prompt().\n"
+      if (!usouNumber) msgErro += "- VocÃª esqueceu de converter o texto para nÃºmero com Number().\n"
+      if (!somouVariaveis) msgErro += "- VocÃª nÃ£o criou a variÃ¡vel 'soma' recebendo a + b.\n"
+      if (!mostrouConsole) msgErro += "- VocÃª nÃ£o exibiu o resultado com console.log(soma)."
       
       setConsoleOutput(msgErro)
       await enviarProgressoParaBackend(false)
@@ -140,30 +141,30 @@ function Licao3() {
       {carregando && <LoadingSpinner mensagem="Validando..." />}
       <FeedbackModal {...modal} onClose={modal.acaoFechar} />
 
-      {/* PAINEL ESQUERDO: INSTRUÇÕES */}
+      {/* PAINEL ESQUERDO: INSTRUÃ‡Ã•ES */}
       <div className="ide-new-sidebar">
         <div className="back-arrow" onClick={() => navigate("/dashboard")}><i className="fa-solid fa-angle-left"></i></div>
         
         <div className="ide-new-title">
           <i className="fa-regular fa-lightbulb" style={{ color: '#ffd700', fontSize: '20px' }}></i>
-          <h2>Soma de Dois Números</h2>
+          <h2>Soma de Dois NÃºmeros</h2>
         </div>
 
         <div className="ide-new-box purple">
-          <h4>📚 TEORIA</h4>
+          <h4>ðŸ“š TEORIA</h4>
           <p>
-            Os computadores são, na verdade, as melhores calculadoras do mundo! 
-            No JavaScript, usamos símbolos matemáticos bem conhecidos como <strong>+</strong> (somar), <strong>-</strong> (subtrair), <strong>*</strong> (multiplicar) e <strong>/</strong> (dividir).<br/><br/>
-            Se usarmos <code>console.log(10 + 5)</code>, o computador fará a conta e escreverá <code>15</code> na tela. É mágica pura!
+            Os computadores sÃ£o, na verdade, as melhores calculadoras do mundo! 
+            No JavaScript, usamos sÃ­mbolos matemÃ¡ticos bem conhecidos como <strong>+</strong> (somar), <strong>-</strong> (subtrair), <strong>*</strong> (multiplicar) e <strong>/</strong> (dividir).<br/><br/>
+            Se usarmos <code>console.log(10 + 5)</code>, o computador farÃ¡ a conta e escreverÃ¡ <code>15</code> na tela. Ã‰ mÃ¡gica pura!
           </p>
         </div>
 
         <div className="ide-new-box">
-          <h4>🎯 MISSÃO</h4>
-          <p style={{marginBottom: "10px"}}>Crie sua primeira calculadora dinâmica!</p>
+          <h4>ðŸŽ¯ MISSÃƒO</h4>
+          <p style={{marginBottom: "10px"}}>Crie sua primeira calculadora dinÃ¢mica!</p>
           <ol>
-            <li>Guarde os números digitados nas variáveis <strong>a</strong> e <strong>b</strong>. A função <code>prompt()</code> pede textos, então use <strong>Number()</strong> por fora para transformá-los em números de verdade.</li>
-            <li>Crie uma nova variável chamada <strong>soma</strong> que recebe <strong>a + b</strong>.</li>
+            <li>Guarde os nÃºmeros digitados nas variÃ¡veis <strong>a</strong> e <strong>b</strong>. A funÃ§Ã£o <code>prompt()</code> pede textos, entÃ£o use <strong>Number()</strong> por fora para transformÃ¡-los em nÃºmeros de verdade.</li>
+            <li>Crie uma nova variÃ¡vel chamada <strong>soma</strong> que recebe <strong>a + b</strong>.</li>
             <li>Mostre o resultado final da soma na tela usando o megafone: <strong>console.log(soma)</strong>.</li>
           </ol>
         </div>
@@ -174,16 +175,18 @@ function Licao3() {
         
         <div className="ide-new-editor-panel">
           <div className="ide-panel-header">
-            <i className="fa-solid fa-code"></i> EDITOR DE CÓDIGO
+            <i className="fa-solid fa-code"></i> EDITOR DE CÃ“DIGO
           </div>
           
           <div className="ide-textarea-wrapper">
-            <div className="line-numbers">1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9</div>
+            <div className="line-numbers">
+              {codigo.split('\n').map((_, i) => <div key={i}>{i + 1}</div>)}
+            </div>
             <textarea
                 className="ide-new-textarea"
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value)}
-                placeholder="// Digite seu código abaixo:"
+                placeholder="// Digite seu cÃ³digo abaixo:"
                 spellCheck="false"
             />
           </div>
@@ -201,7 +204,7 @@ function Licao3() {
           <div className="ide-new-actions">
             {concluido ? (
               <button className="btn-ide-confirmar" onClick={() => navigate(id === "9" ? "/dashboard" : `/licao/${parseInt(id) + 1}`)}>
-                {id === "9" ? "Finalizar e Voltar ao Mapa" : "Próxima Missão"} <i className="fa-solid fa-arrow-right"></i>
+                {id === "9" ? "Finalizar e Voltar ao Mapa" : "PrÃ³xima MissÃ£o"} <i className="fa-solid fa-arrow-right"></i>
               </button>
             ) : (
               <>

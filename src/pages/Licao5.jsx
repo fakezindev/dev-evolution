@@ -3,17 +3,18 @@ import { useNavigate, useParams } from "react-router-dom"
 import "../styles/licao.css"
 import LoadingSpinner from "../components/LoadingSpinner"
 import FeedbackModal from "../components/FeedbackModal"
+import { API_BASE_URL } from "../api/config"
 
 function Licao5() {
-  const codeScaffold = `// 1. Peça o nome do aluno
+  const codeScaffold = `// 1. PeÃ§a o nome do aluno
 let nome = prompt("Digite o nome:")
 
-// 2. Peça as três notas
+// 2. PeÃ§a as trÃªs notas
 let nota1 = Number(prompt("Nota 1:"))
 let nota2 = Number(prompt("Nota 2:"))
 let nota3 = Number(prompt("Nota 3:"))
 
-// 3. Calcule a média
+// 3. Calcule a mÃ©dia
 
 // 4. Mostre o resultado
 `
@@ -26,19 +27,19 @@ let nota3 = Number(prompt("Nota 3:"))
   const [carregando, setCarregando] = useState(false)
   const [concluido, setConcluido] = useState(false)
   const [modal, setModal] = useState({
-    isOpen: false, tipo: "", titulo: "", mensagem: "", acaoFechar: () => {}
+    isOpen: false, tipo: "", titulo: "", mensagem: "", botoes: [], acaoFechar: () => {}
   })
 
   useEffect(() => {
     if (!localStorage.getItem("token")) navigate("/login")
   }, [navigate])
 
-  // 📡 A Função Universal Definitiva
+  // ðŸ“¡ A FunÃ§Ã£o Universal Definitiva
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
 
     try {
-      const response = await fetch("http://localhost:8080/api/progresso/submeter", {
+      const response = await fetch(`${API_BASE_URL}/api/progresso/submeter`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,9 +61,29 @@ let nota3 = Number(prompt("Nota 3:"))
       if (sucesso) {
         setModal({
           isOpen: true,
-          tipo: "sucesso",
-          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "🎓 Missão Concluída!",
-          mensagem: data.mensagem,
+          tipo: "boss",
+          titulo: "ðŸ† MUNDO 1 CONCLUÃDO!",
+          mensagem: "ParabÃ©ns, Dev! VocÃª venceu o ChefÃ£o da MÃ©dia Simples e completou com sucesso o Mundo 1: Fundamentos da ProgramaÃ§Ã£o! ðŸš€\n\nVocÃª dominou variÃ¡veis, entrada de dados e operaÃ§Ãµes matemÃ¡ticas. O Mundo 2 te espera!",
+          botoes: [
+            {
+              texto: "ðŸ—ºï¸ Voltar ao Mapa",
+              classe: "modal-btn-secundario",
+              onClick: () => {
+                setModal(prev => ({ ...prev, isOpen: false }))
+                setConcluido(true)
+                navigate("/dashboard")
+              }
+            },
+            {
+              texto: "ðŸš€ Ir para o Mundo 2",
+              classe: "modal-btn-boss",
+              onClick: () => {
+                setModal(prev => ({ ...prev, isOpen: false }))
+                setConcluido(true)
+                navigate("/licao/6")
+              }
+            }
+          ],
           acaoFechar: () => {
             setModal(prev => ({ ...prev, isOpen: false }))
             setConcluido(true)
@@ -75,16 +96,18 @@ let nota3 = Number(prompt("Nota 3:"))
             setModal({
                 isOpen: true,
                 tipo: "erro",
-                titulo: "Game Over! 💔",
-                mensagem: "Suas vidas acabaram! Refaça a Lição 1 para recuperar sua energia.",
+                titulo: "Game Over! ðŸ’”",
+                mensagem: "Suas vidas acabaram! RefaÃ§a a LiÃ§Ã£o 1 para recuperar sua energia.",
+                botoes: [],
                 acaoFechar: () => navigate("/dashboard") 
             });
         } else {
             setModal({
               isOpen: true,
               tipo: "erro",
-              titulo: "❌ Código Incorreto",
+              titulo: "âŒ CÃ³digo Incorreto",
               mensagem: data.mensagem, 
+              botoes: [],
               acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
             })
         }
@@ -93,13 +116,13 @@ let nota3 = Number(prompt("Nota 3:"))
     } catch (error) {
       console.error(error)
       setCarregando(false)
-      alert("Erro de conexão com o servidor. Verifique se o banco de dados está rodando!")
+      alert("Erro de conexÃ£o com o servidor. Verifique se o banco de dados estÃ¡ rodando!")
     }
   }
 
-  // 🧠 Validação e Simulador Dinâmico
+  // ðŸ§  ValidaÃ§Ã£o e Simulador DinÃ¢mico
   const verificarCodigo = async () => {
-    setConsoleOutput("Analisando código...")
+    setConsoleOutput("Analisando cÃ³digo...")
 
     const codigoLimpo = codigo.replace(/(\/\*.*\*\/|\/\/.*|\s+)/g, '')
 
@@ -112,22 +135,22 @@ let nota3 = Number(prompt("Nota 3:"))
 
     if (temNome && temNotas && temMedia && temDivisao && temToFixed && temConsole) {
       
-      // 🚀 SIMULAÇÃO DE EXECUÇÃO REAL
+      // ðŸš€ SIMULAÃ‡ÃƒO DE EXECUÃ‡ÃƒO REAL
       setTimeout(() => {
-        // Pede os dados dinamicamente igual à Lição 3
+        // Pede os dados dinamicamente igual Ã  LiÃ§Ã£o 3
         const inputNome = window.prompt("Simulador DevEvolution:\nDigite o nome do aluno:")
-        if (inputNome === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+        if (inputNome === null) { setConsoleOutput("ExecuÃ§Ã£o cancelada pelo usuÃ¡rio."); return; } 
 
         const n1 = window.prompt("Simulador DevEvolution:\nDigite a Nota 1:")
-        if (n1 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+        if (n1 === null) { setConsoleOutput("ExecuÃ§Ã£o cancelada pelo usuÃ¡rio."); return; } 
 
         const n2 = window.prompt("Simulador DevEvolution:\nDigite a Nota 2:")
-        if (n2 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+        if (n2 === null) { setConsoleOutput("ExecuÃ§Ã£o cancelada pelo usuÃ¡rio."); return; } 
 
         const n3 = window.prompt("Simulador DevEvolution:\nDigite a Nota 3:")
-        if (n3 === null) { setConsoleOutput("Execução cancelada pelo usuário."); return; } 
+        if (n3 === null) { setConsoleOutput("ExecuÃ§Ã£o cancelada pelo usuÃ¡rio."); return; } 
 
-        // Converte as notas e calcula a média na hora
+        // Converte as notas e calcula a mÃ©dia na hora
         const nota1 = Number(n1)
         const nota2 = Number(n2)
         const nota3 = Number(n3)
@@ -138,19 +161,19 @@ let nota3 = Number(prompt("Nota 3:"))
 > notas = ${nota1}, ${nota2}, ${nota3}
 > let media = (n1 + n2 + n3) / 3;
 
-"A média final de ${inputNome} é ${media}"`
+"A mÃ©dia final de ${inputNome} Ã© ${media}"`
         )
 
         enviarProgressoParaBackend(true)
       }, 500)
 
     } else {
-      let erro = "Erro de Lógica ou Sintaxe:\n"
+      let erro = "Erro de LÃ³gica ou Sintaxe:\n"
 
-      if (!temNome) erro += "- Crie a variável nome\n"
+      if (!temNome) erro += "- Crie a variÃ¡vel nome\n"
       if (!temNotas) erro += "- Crie as 3 notas\n"
-      if (!temMedia) erro += "- Crie a variável media\n"
-      if (!temDivisao) erro += "- Divida por 3 na variável da média\n"
+      if (!temMedia) erro += "- Crie a variÃ¡vel media\n"
+      if (!temDivisao) erro += "- Divida por 3 na variÃ¡vel da mÃ©dia\n"
       if (!temToFixed) erro += "- Use .toFixed(2) no console.log\n"
       if (!temConsole) erro += "- Exiba o resultado com console.log\n"
 
@@ -178,25 +201,25 @@ let nota3 = Number(prompt("Nota 3:"))
         </div>
 
         <div className="ide-new-title">
-          <h2>🎓 Média Simples</h2>
+          <h2>ðŸ‘‘ MÃ©dia Simples (ChefÃ£o)</h2>
         </div>
 
         <div className="ide-new-box purple">
-          <h4>📚 TEORIA</h4>
+          <h4>ðŸ“š TEORIA</h4>
           <p>
-            Assim como na matemática da escola, o computador sempre tenta resolver multiplicação e divisão antes da soma e subtração.<br/><br/>
-            Para fazer a média escolar, nós <strong>somamos</strong> todas as notas primeiro e depois <strong>dividimos</strong> pela quantidade de matérias. 
-            Para forçar o computador a fazer a soma primeiro, abraçamos as notas com <strong>( )</strong>: <code>(nota1 + nota2 + nota3) / 3</code>.
+            Assim como na matemÃ¡tica da escola, o computador sempre tenta resolver multiplicaÃ§Ã£o e divisÃ£o antes da soma e subtraÃ§Ã£o.<br/><br/>
+            Para fazer a mÃ©dia escolar, nÃ³s <strong>somamos</strong> todas as notas primeiro e depois <strong>dividimos</strong> pela quantidade de matÃ©rias. 
+            Para forÃ§ar o computador a fazer a soma primeiro, abraÃ§amos as notas com <strong>( )</strong>: <code>(nota1 + nota2 + nota3) / 3</code>.
           </p>
         </div>
 
         <div className="ide-new-box">
-          <h4>🎯 MISSÃO</h4>
-          <p style={{marginBottom: "10px"}}>Calcule a média do aluno e mostre o boletim final.</p>
+          <h4>ðŸŽ¯ MISSÃƒO DO CHEFÃƒO DO MUNDO 1</h4>
+          <p style={{marginBottom: "10px"}}>Calcule a mÃ©dia do aluno e mostre o boletim final para vencer o Mundo 1.</p>
           <ol>
-            <li>O código já pede o nome e as 3 notas usando <code>prompt()</code>.</li>
-            <li>Crie uma nova variável <strong>media</strong> que soma as 3 notas (usando os parênteses) e divide tudo por 3.</li>
-            <li>No final, mostre no <code>console.log()</code> a média final formatada com <strong>.toFixed(2)</strong> para deixar bonitinho (ex: 8.50).</li>
+            <li>O cÃ³digo jÃ¡ pede o nome e as 3 notas usando <code>prompt()</code>.</li>
+            <li>Crie uma nova variÃ¡vel <strong>media</strong> que soma as 3 notas (usando os parÃªnteses) e divide tudo por 3.</li>
+            <li>No final, mostre no <code>console.log()</code> a mÃ©dia final formatada com <strong>.toFixed(2)</strong> para deixar bonitinho (ex: 8.50).</li>
           </ol>
         </div>
 
@@ -211,13 +234,15 @@ let nota3 = Number(prompt("Nota 3:"))
           </div>
 
           <div className="ide-textarea-wrapper">
-            <div className="line-numbers">1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12</div>
+            <div className="line-numbers">
+              {codigo.split('\n').map((_, i) => <div key={i}>{i + 1}</div>)}
+            </div>
 
             <textarea
               className="ide-new-textarea"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
-              placeholder="// Digite seu código abaixo:"
+              placeholder="// Digite seu cÃ³digo abaixo:"
               spellCheck="false"
             />
           </div>
@@ -235,9 +260,22 @@ let nota3 = Number(prompt("Nota 3:"))
 
         <div className="ide-new-actions">
           {concluido ? (
-            <button className="btn-ide-confirmar" onClick={() => navigate(id === "9" ? "/dashboard" : `/licao/${parseInt(id) + 1}`)}>
-              {id === "9" ? "Finalizar e Voltar ao Mapa" : "Próxima Missão"} <i className="fa-solid fa-arrow-right"></i>
-            </button>
+            <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'flex-end' }}>
+              <button 
+                className="btn-ide-reset" 
+                onClick={() => navigate("/dashboard")}
+                style={{ background: '#334155', color: '#fff' }}
+              >
+                ðŸ—ºï¸ Voltar ao Mapa
+              </button>
+              <button 
+                className="btn-ide-confirmar" 
+                onClick={() => navigate("/licao/6")}
+                style={{ background: 'linear-gradient(135deg, #f1c40f 0%, #e67e22 100%)', color: '#000', fontWeight: 'bold' }}
+              >
+                ðŸš€ AvanÃ§ar para o Mundo 2 <i className="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
           ) : (
             <>
               <button className="btn-ide-reset" onClick={resetar}>
@@ -248,7 +286,7 @@ let nota3 = Number(prompt("Nota 3:"))
                 onClick={verificarCodigo}
                 disabled={carregando}
               >
-                ▶ {carregando ? "Validando..." : "Executar"}
+                â–¶ {carregando ? "Validando..." : "Executar"}
               </button>
             </>
           )}

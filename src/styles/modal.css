@@ -1,6 +1,7 @@
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   display: flex; justify-content: center; align-items: center;
   z-index: 10000;
   animation: fadeIn 0.3s ease;
@@ -8,9 +9,8 @@
 
 .modal-content {
   background: #1e1e2f; padding: 40px; border-radius: 20px;
-  text-align: center; max-width: 450px; width: 90%;
+  text-align: center; max-width: 480px; width: 90%;
   box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-  /* Animação estilo "pulo" na tela */
   animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
 }
 
@@ -18,16 +18,35 @@
 .modal-sucesso { border-bottom: 10px solid #4cd137; }
 .modal-erro { border-bottom: 10px solid #e84118; }
 
+/* Estilo especial para vitória de Boss / Conclusão de Mundo */
+.modal-boss { 
+  border-bottom: 10px solid #f1c40f; 
+  background: linear-gradient(145deg, #1b1b33 0%, #281845 100%);
+  border: 1px solid rgba(241, 196, 15, 0.4);
+  box-shadow: 0 0 50px rgba(241, 196, 15, 0.25), 0 20px 40px rgba(0,0,0,0.7);
+}
+
 .modal-title { color: white; margin-bottom: 10px; font-size: 1.8rem; }
-.modal-message { color: #a4b0be; font-size: 1.1rem; margin-bottom: 25px; }
+.modal-message { color: #a4b0be; font-size: 1.05rem; margin-bottom: 25px; line-height: 1.5; white-space: pre-line; }
 
 .modal-icon { font-size: 70px; margin-bottom: 20px; }
 .modal-sucesso .modal-icon { color: #4cd137; text-shadow: 0 0 20px rgba(76, 209, 55, 0.4); }
 .modal-erro .modal-icon { color: #e84118; text-shadow: 0 0 20px rgba(232, 65, 24, 0.4); }
 
+.modal-boss .modal-icon { 
+  color: #f1c40f; 
+  text-shadow: 0 0 30px rgba(241, 196, 15, 0.6);
+  animation: bounceBoss 0.8s ease infinite alternate;
+}
+
+@keyframes bounceBoss {
+  from { transform: scale(1); }
+  to { transform: scale(1.15) translateY(-6px); }
+}
+
 .modal-btn {
   padding: 15px 30px; border: none; border-radius: 10px;
-  font-size: 1.2rem; font-weight: bold; cursor: pointer; color: white;
+  font-size: 1.1rem; font-weight: bold; cursor: pointer; color: white;
   width: 100%; transition: all 0.2s; text-transform: uppercase;
 }
 
@@ -36,6 +55,47 @@
 
 .modal-erro .modal-btn { background-color: #e84118; }
 .modal-erro .modal-btn:hover { background-color: #c23616; transform: translateY(-2px); }
+
+.modal-botoes-container {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.modal-botoes-container .modal-btn {
+  flex: 1;
+  font-size: 0.95rem;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal-btn-secundario {
+  background-color: #2f3542 !important;
+  color: #a4b0be !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.modal-btn-secundario:hover {
+  background-color: #57606f !important;
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+.modal-btn-boss {
+  background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%) !important;
+  color: #000 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4) !important;
+}
+
+.modal-btn-boss:hover {
+  background: linear-gradient(135deg, #f39c12 0%, #d35400 100%) !important;
+  transform: translateY(-2px);
+}
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { 

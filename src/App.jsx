@@ -9,14 +9,13 @@ import LoginUser from "./pages/LoginUser"
 import Perfil from "./pages/Perfil"
 import Ligas from "./pages/Ligas"
 import ManualConduta from "./pages/ManualConduta"
-import LicaoManager from "./pages/LicaoManager" 
+import LicaoManager from "./pages/LicaoManager"
 import PrivateRoute from "./components/Privateroute"
-
-// 1. IMPORTAMOS OS COMPONENTES NOVOS AQUI EM CIMA
 import RotaProtegida from "./components/RotaProtegida"
-import AvisoBloqueio from "./components/AvisoBloqueio" // ou "./pages/AvisoBloqueio" se você salvou lá
-import Mundo2 from "./pages/Mundo2" // O arquivo principal do Mundo 2 que você ainda vai criar
+import AvisoBloqueio from "./components/AvisoBloqueio"
+import Mundo2 from "./pages/Mundo2"
 
+// Layout compartilhado: Sidebar + Topbar + conteúdo filho
 function Layout({ children }) {
   return (
     <div className="layout">
@@ -30,45 +29,28 @@ function Layout({ children }) {
 }
 
 function App() {
-
   return (
     <Routes>
-      {/* --- SUAS ROTAS ANTIGAS CONTINUAM IGUAIS --- */}
+      {/* Rotas públicas */}
       <Route path="/" element={<Navigate to="/cadastro" />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/login" element={<LoginUser />} />
+
+      {/* Manual precisa de auth mas NÃO usa Layout (sem sidebar/topbar) */}
       <Route path="/manual-conduta" element={<PrivateRoute><ManualConduta /></PrivateRoute>} />
+
+      {/* Rotas protegidas com Layout */}
       <Route path="/dashboard" element={<PrivateRoute><Layout><Trilha /></Layout></PrivateRoute>} />
-      <Route path="/perfil" element={<PrivateRoute><Layout><Perfil /></Layout></PrivateRoute>} />
-      <Route path="/ligas" element={<PrivateRoute><Layout><Ligas /></Layout></PrivateRoute>} />
-      <Route 
-        path="/licao/:id" 
-        element={
-          <PrivateRoute>
-            <Layout>
-              <LicaoManager />
-            </Layout>
-          </PrivateRoute>
-        } 
-      />
+      <Route path="/perfil"    element={<PrivateRoute><Layout><Perfil /></Layout></PrivateRoute>} />
+      <Route path="/ligas"     element={<PrivateRoute><Layout><Ligas /></Layout></PrivateRoute>} />
+      <Route path="/licao/:id" element={<PrivateRoute><Layout><LicaoManager /></Layout></PrivateRoute>} />
 
-      {/* --- INSERIMOS AS ROTAS NOVAS AQUI DENTRO --- */}
-      
-      {/* Tela de aviso. Colocamos dentro do <Layout> para manter a Sidebar e Topbar aparecendo! */}
-      <Route 
-        path="/aviso-bloqueio" 
-        element={
-          <PrivateRoute>
-            <Layout>
-              <AvisoBloqueio />
-            </Layout>
-          </PrivateRoute>
-        } 
-      />
+      {/* Tela de aviso quando o Mundo 2 está bloqueado */}
+      <Route path="/aviso-bloqueio" element={<PrivateRoute><AvisoBloqueio /></PrivateRoute>} />
 
-      {/* A Rota do Mundo 2 com DUPLA PROTEÇÃO */}
-      <Route 
-        path="/mundo2" 
+      {/* Mundo 2 com dupla proteção: autenticação + conclusão do Mundo 1 */}
+      <Route
+        path="/mundo2"
         element={
           <PrivateRoute>
             <RotaProtegida>
@@ -77,10 +59,10 @@ function App() {
               </Layout>
             </RotaProtegida>
           </PrivateRoute>
-        } 
+        }
       />
-      
     </Routes>
   )
 }
+
 export default App

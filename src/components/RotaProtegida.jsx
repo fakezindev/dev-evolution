@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/config';
 
 // A proteção agora é inteligente: ela consulta o backend para saber
 // se o aluno realmente concluiu o Mundo 1 antes de liberar o Mundo 2.
@@ -14,7 +15,7 @@ const RotaProtegida = ({ children }) => {
       return;
     }
 
-    fetch('http://localhost:8080/api/alunos/meu-perfil', {
+    fetch(`${API_BASE_URL}/api/alunos/meu-perfil`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

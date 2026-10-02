@@ -1,6 +1,7 @@
-import "../styles/login.css"
+﻿import "../styles/login.css"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { API_BASE_URL } from "../api/config"
 
 function Cadastro() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ function Cadastro() {
 
     try {
       // 1. Requisição ÚNICA de Cadastro (agora só com os 3 campos)
-      const registerResponse = await fetch("http://localhost:8080/api/auth/register", {
+      const registerResponse = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -36,7 +37,7 @@ function Cadastro() {
       }
 
       // 2. Login automático
-      const loginResponse = await fetch("http://localhost:8080/api/auth/login", {
+      const loginResponse = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

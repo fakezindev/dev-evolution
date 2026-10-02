@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react"
+﻿import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import "../styles/licao.css"
 import LoadingSpinner from "../components/LoadingSpinner"
 import FeedbackModal from "../components/FeedbackModal"
+import { API_BASE_URL } from "../api/config"
 
 function Licao4() {
   const codeScaffold = `
@@ -12,7 +13,7 @@ let desconto = 10
 
 // 3. Calcule o valor do desconto
 
-// 4. Calcule o novo preço
+// 4. Calcule o novo preÃ§o
 
 // 5. Mostre no console
 `
@@ -28,23 +29,23 @@ let desconto = 10
     isOpen: false, tipo: "", titulo: "", mensagem: "", acaoFechar: () => {}
   })
 
-  // 🔒 segurança
+  // ðŸ”’ seguranÃ§a
   useEffect(() => {
     if (!localStorage.getItem("token")) navigate("/login")
   }, [navigate])
 
-  // 📡 backend
+  // ðŸ“¡ backend
   const enviarProgressoParaBackend = async (sucesso) => {
     setCarregando(true)
     try {
-      const response = await fetch("http://localhost:8080/api/progresso/submeter", {
+      const response = await fetch(`${API_BASE_URL}/api/progresso/submeter`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-          desafioId: parseInt(id) || 4, // ⚠️ ATENÇÃO: Mude este número para 1, 2, 3 ou 4 dependendo da tela!
+          desafioId: parseInt(id) || 4, // âš ï¸ ATENÃ‡ÃƒO: Mude este nÃºmero para 1, 2, 3 ou 4 dependendo da tela!
           sucesso: sucesso
         })
       })
@@ -53,7 +54,7 @@ let desconto = 10
 
       const data = await response.json()
 
-      // 📢 Avisa o Topbar instantaneamente
+      // ðŸ“¢ Avisa o Topbar instantaneamente
       window.dispatchEvent(new Event('atualizarPerfil'))
       setCarregando(false)
 
@@ -61,8 +62,8 @@ let desconto = 10
         setModal({
           isOpen: true,
           tipo: "sucesso",
-          // Título dinâmico baseado na resposta do Java
-          titulo: data.mensagem.includes("Revisão") ? "💖 Revisão Concluída!" : "✅ Missão Concluída!",
+          // TÃ­tulo dinÃ¢mico baseado na resposta do Java
+          titulo: data.mensagem.includes("RevisÃ£o") ? "ðŸ’– RevisÃ£o ConcluÃ­da!" : "âœ… MissÃ£o ConcluÃ­da!",
           mensagem: data.mensagem,
           acaoFechar: () => {
             setModal(prev => ({ ...prev, isOpen: false }))
@@ -70,23 +71,23 @@ let desconto = 10
           }
         })
       } else {
-        // Lógica de Game Over Blindada
+        // LÃ³gica de Game Over Blindada
         const vidasRestantes = data.vidasAtuais !== undefined ? data.vidasAtuais : data.vidas;
 
         if (vidasRestantes <= 0) {
             setModal({
                 isOpen: true,
                 tipo: "erro",
-                titulo: "Game Over! 💔",
-                mensagem: "Suas vidas acabaram! Refaça a Lição 1 para recuperar sua energia.",
+                titulo: "Game Over! ðŸ’”",
+                mensagem: "Suas vidas acabaram! RefaÃ§a a LiÃ§Ã£o 1 para recuperar sua energia.",
                 acaoFechar: () => navigate("/dashboard")
             });
         } else {
             setModal({
               isOpen: true,
               tipo: "erro",
-              titulo: "❌ Lógica Incorreta",
-              mensagem: data.mensagem, // 🗣️ Usa a mensagem de erro direto do Java!
+              titulo: "âŒ LÃ³gica Incorreta",
+              mensagem: data.mensagem, // ðŸ—£ï¸ Usa a mensagem de erro direto do Java!
               acaoFechar: () => setModal(prev => ({ ...prev, isOpen: false }))
             })
         }
@@ -95,13 +96,13 @@ let desconto = 10
       console.error(error)
       setCarregando(false)
       // Mensagem de alerta melhorada para te ajudar a lembrar do Banco de Dados
-      alert("Erro de conexão com o servidor. Verifique se o Desafio existe no Banco de Dados!")
+      alert("Erro de conexÃ£o com o servidor. Verifique se o Desafio existe no Banco de Dados!")
     }
   }
 
-  // 🧠 validação inteligente (igual Lição 3)
+  // ðŸ§  validaÃ§Ã£o inteligente (igual LiÃ§Ã£o 3)
   const verificarCodigo = async () => {
-    setConsoleOutput("Analisando código...")
+    setConsoleOutput("Analisando cÃ³digo...")
 
     const codigoLimpo = codigo.replace(/(\/\*.*\*\/|\/\/.*|\s+)/g, '')
 
@@ -133,10 +134,10 @@ let desconto = 10
       }, 500)
 
     } else {
-      let erro = "Erro de lógica:\n"
+      let erro = "Erro de lÃ³gica:\n"
 
-      if (!temPreco) erro += "- Crie a variável preco\n"
-      if (!temDesconto) erro += "- Crie a variável desconto\n"
+      if (!temPreco) erro += "- Crie a variÃ¡vel preco\n"
+      if (!temDesconto) erro += "- Crie a variÃ¡vel desconto\n"
       if (!temValorDesconto) erro += "- Calcule valorDesconto\n"
       if (!temNovoPreco) erro += "- Calcule novoPreco\n"
       if (!temConsole) erro += "- Use console.log\n"
@@ -165,25 +166,25 @@ let desconto = 10
         </div>
 
         <div className="ide-new-title">
-          <h2>💡 Cálculo de Desconto</h2>
+          <h2>ðŸ’¡ CÃ¡lculo de Desconto</h2>
         </div>
 
         <div className="ide-new-box purple">
-          <h4>📚 TEORIA</h4>
+          <h4>ðŸ“š TEORIA</h4>
           <p>
-            No JavaScript, os números com vírgula (como R$ 10,50) são escritos com <strong>ponto</strong> (10.50), igual nos Estados Unidos!<br/><br/>
-            Além de somar, podemos fazer contas maiores misturando operadores. 
-            Para calcular um desconto, por exemplo, multiplicamos o preço pela porcentagem (`*`) e dividimos por 100 (`/`).
+            No JavaScript, os nÃºmeros com vÃ­rgula (como R$ 10,50) sÃ£o escritos com <strong>ponto</strong> (10.50), igual nos Estados Unidos!<br/><br/>
+            AlÃ©m de somar, podemos fazer contas maiores misturando operadores. 
+            Para calcular um desconto, por exemplo, multiplicamos o preÃ§o pela porcentagem (`*`) e dividimos por 100 (`/`).
           </p>
         </div>
 
         <div className="ide-new-box">
-          <h4>🎯 MISSÃO</h4>
-          <p style={{marginBottom: "10px"}}>Calcule o novo preço do produto com o desconto aplicado!</p>
+          <h4>ðŸŽ¯ MISSÃƒO</h4>
+          <p style={{marginBottom: "10px"}}>Calcule o novo preÃ§o do produto com o desconto aplicado!</p>
           <ol>
-            <li>A variável <strong>preco</strong> e <strong>desconto</strong> já existem.</li>
-            <li>Crie uma nova variável chamada <strong>valorDesconto</strong> que vai ser igual a <code>(preco * desconto) / 100</code>.</li>
-            <li>Crie outra variável chamada <strong>novoPreco</strong> que recebe <code>preco - valorDesconto</code>.</li>
+            <li>A variÃ¡vel <strong>preco</strong> e <strong>desconto</strong> jÃ¡ existem.</li>
+            <li>Crie uma nova variÃ¡vel chamada <strong>valorDesconto</strong> que vai ser igual a <code>(preco * desconto) / 100</code>.</li>
+            <li>Crie outra variÃ¡vel chamada <strong>novoPreco</strong> que recebe <code>preco - valorDesconto</code>.</li>
             <li>Mostre no console o <strong>novoPreco</strong>.</li>
           </ol>
         </div>
@@ -205,7 +206,7 @@ let desconto = 10
               className="ide-new-textarea"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
-              placeholder="// Digite seu código abaixo:"
+              placeholder="// Digite seu cÃ³digo abaixo:"
               spellCheck="false"
             />
           </div>
@@ -224,7 +225,7 @@ let desconto = 10
         <div className="ide-new-actions">
           {concluido ? (
             <button className="btn-ide-confirmar" onClick={() => navigate(id === "9" ? "/dashboard" : `/licao/${parseInt(id) + 1}`)}>
-              {id === "9" ? "Finalizar e Voltar ao Mapa" : "Próxima Missão"} <i className="fa-solid fa-arrow-right"></i>
+              {id === "9" ? "Finalizar e Voltar ao Mapa" : "PrÃ³xima MissÃ£o"} <i className="fa-solid fa-arrow-right"></i>
             </button>
           ) : (
             <>
@@ -232,7 +233,7 @@ let desconto = 10
                 Resetar
               </button>
               <button className="btn-ide-executar-new" onClick={verificarCodigo}>
-                ▶ Executar
+                â–¶ Executar
               </button>
             </>
           )}

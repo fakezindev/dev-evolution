@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/perfil.css"
 import "../styles/ligas.css"
+import { obterLiga } from "../utils/ligas"
+import { API_BASE_URL } from "../api/config"
 
 function Ligas() {
   const navigate = useNavigate()
@@ -13,20 +15,9 @@ function Ligas() {
 
   const FOTO_DEFAULT = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
 
-  // Calculadora Oficial de Ligas (Importada da sua lógica do Topbar!)
-  const obterLiga = (xp) => {
-    if (xp < 150) return { nome: "Bronze", cor: "#cd7f32", icone: "fa-medal", min: 0 }
-    if (xp < 300) return { nome: "Prata", cor: "#c0c0c0", icone: "fa-shield", min: 150 }
-    if (xp < 501) return { nome: "Ouro", cor: "#ffd700", icone: "fa-trophy", min: 300 }
-    if (xp < 850) return { nome: "Platina", cor: "#b0e0e6", icone: "fa-trophy", min: 501 } 
-    if (xp < 1100) return { nome: "Diamante", cor: "#00d2ff", icone: "fa-gem", min: 850 }
-    if (xp < 1600) return { nome: "Champion", cor: "purple", icone: "fa-gem", min: 1100 }
-    if (xp < 1750) return { nome: "GrandChampion", cor: "red", icone: "fa-gem", min: 1600 }
-    
-    return { nome: "Mestre", cor: "black", icone: "fa-crown", min: 1750 }
-  }
+  // obterLiga vem de src/utils/ligas.js — fonte única da verdade
 
-  // Array estruturado para renderizar o painel de explicação automaticamente
+  // Array estruturado para renderizar o painel de explicão automaticamente
   const niveisLigas = [
     obterLiga(0), obterLiga(150), obterLiga(300), obterLiga(501),
     obterLiga(850), obterLiga(1100), obterLiga(1600), obterLiga(1750)
@@ -41,7 +32,7 @@ function Ligas() {
 
     const buscarRanking = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/alunos/ranking", {
+    const response = await fetch(`${API_BASE_URL}/api/alunos/ranking`, {
           headers: { "Authorization": `Bearer ${token}` }
         })
 

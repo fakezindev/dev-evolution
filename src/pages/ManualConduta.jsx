@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Check, AlertTriangle } from 'lucide-react';
+import {
+  Shield,
+  Check,
+  AlertTriangle,
+  Users,
+  Code2,
+  Lock,
+  Sparkles,
+  X,
+  Loader2,
+  ShieldCheck,
+  Gamepad2
+} from 'lucide-react';
+import '../styles/manual.css';
+import { API_BASE_URL } from "../api/config";
 
 function ManualConduta() {
   const navigate = useNavigate();
@@ -8,12 +22,12 @@ function ManualConduta() {
   const [carregando, setCarregando] = useState(false);
 
   const handleAceitar = async () => {
-    if (!aceito) return;
+    if (!aceito || carregando) return;
     setCarregando(true);
     
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/api/alunos/aceitar-manual", {
+      const res = await fetch(`${API_BASE_URL}/api/alunos/aceitar-manual`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -38,79 +52,130 @@ function ManualConduta() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-950 p-4 font-sans">
-      <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-        
-        {/* Glow effect */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-purple-500/10 blur-3xl rounded-full"></div>
-        
-        <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="w-20 h-20 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(168,85,247,0.3)] border border-purple-500/30">
-            <Shield size={40} />
+    <div className="manual-page">
+      {/* Glow Effects */}
+      <div className="manual-bg-glow"></div>
+      <div className="manual-bg-glow-bottom"></div>
+
+      <div className="manual-card">
+        {/* Header Section */}
+        <div className="manual-header">
+          <div className="manual-badge">
+            <ShieldCheck size={14} /> DevEvolution • Protocolo da Comunidade
+          </div>
+
+          <div className="manual-icon-wrapper">
+            <Shield size={42} strokeWidth={2.2} />
           </div>
           
-          <h1 className="text-3xl font-black text-slate-100 mb-2">Manual de Conduta</h1>
-          <p className="text-slate-400 font-medium mb-8">
-            Para garantir que nossa comunidade seja incrível para todos, precisamos que você concorde com as regras do jogo.
+          <h1 className="manual-title">Manual de Conduta</h1>
+          <p className="manual-subtitle">
+            Para garantir que nossa comunidade seja incrível, justa e enriquecedora para todos os devs, pedimos que leia e aceite as regras do jogo antes de começar.
           </p>
+        </div>
 
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-left w-full space-y-4 mb-8 h-64 overflow-y-auto custom-scrollbar">
-            <h3 className="text-purple-400 font-bold flex items-center gap-2">
-              <AlertTriangle size={18} /> As 3 Leis do DevEvolution
-            </h3>
-            
-            <div className="space-y-4 text-slate-300 text-sm">
-              <p>
-                <strong className="text-slate-100">1. Respeito Mútuo:</strong> Não toleramos nenhum tipo de linguagem ofensiva, bullying ou desrespeito com outros jogadores no fórum ou em qualquer ambiente da plataforma.
-              </p>
-              <p>
-                <strong className="text-slate-100">2. Esforço Genuíno:</strong> Compartilhar respostas diretas atrapalha o seu aprendizado e o dos outros. Você pode e deve ajudar, mas explicando a lógica, não entregando o código pronto.
-              </p>
-              <p>
-                <strong className="text-slate-100">3. Segurança Primeiro:</strong> Não compartilhe senhas, e-mails ou informações pessoais com outros usuários. O DevEvolution nunca pedirá sua senha fora da tela de login.
-              </p>
-              <p className="italic text-slate-500 mt-4 pt-4 border-t border-slate-800/50">
-                O descumprimento destas regras pode resultar em perda de XP, bloqueio temporário ou banimento permanente da plataforma.
-              </p>
+        {/* The 3 Laws Section */}
+        <div className="manual-laws-container">
+          {/* Law 1 */}
+          <div className="manual-law-card">
+            <div className="law-icon-box purple">
+              <Users size={22} />
             </div>
-          </div>
-
-          <label className="flex items-start gap-4 mb-8 cursor-pointer group text-left w-full bg-slate-800/30 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800 transition-colors">
-            <div className="relative flex items-center mt-1">
-              <input 
-                type="checkbox" 
-                className="peer sr-only"
-                checked={aceito}
-                onChange={(e) => setAceito(e.target.checked)}
-              />
-              <div className="w-6 h-6 bg-slate-900 border-2 border-slate-600 rounded flex items-center justify-center peer-checked:bg-purple-500 peer-checked:border-purple-500 transition-all">
-                <Check size={16} className="text-white opacity-0 peer-checked:opacity-100" strokeWidth={3} />
+            <div className="law-content">
+              <div className="law-header">
+                <h3 className="law-title">1. Respeito Mútuo</h3>
+                <span className="law-tag">Convivência</span>
               </div>
+              <p className="law-description">
+                Não toleramos nenhum tipo de linguagem ofensiva, bullying ou desrespeito com outros jogadores no fórum ou em qualquer ambiente da plataforma.
+              </p>
             </div>
-            <span className="text-slate-300 font-medium select-none group-hover:text-slate-200 transition-colors">
-              Li e concordo em seguir o Manual de Conduta do DevEvolution. Prometo ajudar a manter um ambiente seguro e divertido.
-            </span>
-          </label>
-
-          <div className="flex gap-4 w-full">
-            <button 
-              onClick={handleRecusar}
-              className="flex-1 py-4 font-bold text-slate-400 bg-slate-900 border border-slate-700 rounded-xl hover:bg-slate-800 transition-colors"
-            >
-              Não Aceito
-            </button>
-            <button 
-              onClick={handleAceitar}
-              disabled={!aceito || carregando}
-              className={`flex-1 py-4 font-bold text-white rounded-xl transition-all shadow-lg flex items-center justify-center ${
-                aceito 
-                ? 'bg-purple-600 hover:bg-purple-500 hover:shadow-purple-500/25' 
-                : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-              }`}
-            >
-              {carregando ? 'Confirmando...' : 'Aceitar e Jogar'}
-            </button>
           </div>
+
+          {/* Law 2 */}
+          <div className="manual-law-card">
+            <div className="law-icon-box cyan">
+              <Code2 size={22} />
+            </div>
+            <div className="law-content">
+              <div className="law-header">
+                <h3 className="law-title">2. Esforço Genuíno</h3>
+                <span className="law-tag">Aprendizado</span>
+              </div>
+              <p className="law-description">
+                Compartilhar respostas diretas atrapalha o seu aprendizado e o dos outros. Você pode e deve ajudar, mas explicando a lógica, não entregando o código pronto.
+              </p>
+            </div>
+          </div>
+
+          {/* Law 3 */}
+          <div className="manual-law-card">
+            <div className="law-icon-box emerald">
+              <Lock size={22} />
+            </div>
+            <div className="law-content">
+              <div className="law-header">
+                <h3 className="law-title">3. Segurança Primeiro</h3>
+                <span className="law-tag">Privacidade</span>
+              </div>
+              <p className="law-description">
+                Não compartilhe senhas, e-mails ou informações pessoais com outros usuários. O DevEvolution nunca pedirá sua senha fora da tela de login.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Warning Callout */}
+        <div className="manual-warning-card">
+          <AlertTriangle size={20} />
+          <div>
+            O descumprimento destas regras pode resultar em perda de XP, bloqueio temporário ou banimento permanente da plataforma.
+          </div>
+        </div>
+
+        {/* Interactive Agreement Checkbox */}
+        <div 
+          className={`manual-checkbox-card ${aceito ? 'checked' : ''}`}
+          onClick={() => setAceito(!aceito)}
+        >
+          <div className={`custom-checkbox ${aceito ? 'active' : ''}`}>
+            <Check size={16} strokeWidth={3} />
+          </div>
+          <span className="checkbox-text">
+            Li e concordo em seguir o Manual de Conduta do DevEvolution. Prometo ajudar a manter um ambiente seguro e divertido.
+          </span>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="manual-actions">
+          <button 
+            type="button"
+            onClick={handleRecusar}
+            className="btn-recusar"
+          >
+            <X size={18} /> Sair / Recusar
+          </button>
+          
+          <button 
+            type="button"
+            onClick={handleAceitar}
+            disabled={!aceito || carregando}
+            className={`btn-aceitar ${aceito && !carregando ? 'active' : 'disabled'}`}
+          >
+            {carregando ? (
+              <>
+                <Loader2 size={18} className="animate-spin" /> Confirmando...
+              </>
+            ) : aceito ? (
+              <>
+                <Gamepad2 size={18} /> Aceitar e Jogar
+              </>
+            ) : (
+              <>
+                Concorde com os termos para continuar
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>

@@ -1,250 +1,424 @@
-/* =========================================
-   ESTILOS DA NOVA IDE (PADRÃO FIGMA)
-========================================= */
+/* ==========================================================
+   DevEvolution - Modern Gaming IDE & Lesson Styles
+   ========================================================== */
 
-.ide-container {
+/* Main Container for all Lessons */
+.ide-container,
+.ide-new-container {
   display: flex;
-  gap: 20px;
-  height: calc(100vh - 100px); /* Ajuste conforme o tamanho da sua Topbar */
-  padding: 20px;
-  background-color: transparent;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
+  gap: 24px;
+  min-height: calc(100vh - 70px);
+  padding: 24px 32px;
+  background: radial-gradient(circle at 50% 10%, #172448 0%, #0b1329 70%, #060a17 100%);
+  color: #e2e8f0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  position: relative;
+  box-sizing: border-box;
 }
 
-/* --- PAINEL ESQUERDO --- */
-.ide-sidebar {
-  width: 30%;
+/* --- PAINEL ESQUERDO: INSTRUÇÕES --- */
+.ide-sidebar,
+.ide-new-sidebar {
+  width: 32%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+  background: rgba(19, 31, 58, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
 }
 
-.ide-title {
+/* Back Arrow Button */
+.back-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  align-self: flex-start;
+  margin-bottom: 4px;
+}
+
+.back-arrow:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #c084fc;
+  transform: translateX(-2px);
+}
+
+/* Lesson Title */
+.ide-title,
+.ide-new-title {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
-.ide-title h2 {
+.ide-title h2,
+.ide-new-title h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 30%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.3px;
 }
 
-.ide-instruction-box {
-  background-color: #1a2332;
-  border: 1px solid #2d3748;
-  border-radius: 12px;
-  padding: 20px;
-  font-size: 16px;
-  line-height: 1.5;
+/* Theory & Mission Boxes */
+.ide-instruction-box,
+.ide-new-box {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ide-new-box.purple {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+}
+
+.ide-instruction-box h4,
+.ide-new-box h4 {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #a855f7;
+  text-transform: uppercase;
+}
+
+.ide-instruction-box p,
+.ide-new-box p,
+.ide-new-box ol {
+  font-size: 14px;
+  line-height: 1.55;
   color: #cbd5e1;
+  margin: 0;
 }
 
-/* --- PAINEL DIREITO --- */
-.ide-main {
-  width: 70%;
+.ide-new-box ol {
+  padding-left: 18px;
+}
+
+.ide-new-box ol li {
+  margin-bottom: 6px;
+}
+
+.ide-new-box code {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #38bdf8;
+  font-family: 'Google Sans Code', monospace;
+  font-size: 13px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+/* --- PAINEL DIREITO: EDITOR E CONSOLE --- */
+.ide-main,
+.ide-new-main {
+  width: 68%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .ide-panel-header {
-  font-size: 12px;
-  font-weight: bold;
-  color: #94a3b8;
-  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #c084fc;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-/* SAÍDA DO SIMULADOR */
-.ide-output-panel {
-  flex: 1; /* Ocupa metade do espaço direito */
+/* Editor Panel */
+.ide-editor-panel,
+.ide-new-editor-panel {
+  flex: 2;
   display: flex;
   flex-direction: column;
 }
 
-.ide-terminal {
+.ide-textarea-wrapper {
   flex: 1;
-  background-color: #0f172a;
-  border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 20px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
-  color: #fff;
+  display: flex;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.line-numbers {
+  padding: 16px 12px;
+  background: rgba(13, 22, 45, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  font-family: 'Google Sans Code', 'Fira Code', monospace;
+  font-size: 14.5px;
+  text-align: right;
+  user-select: none;
+  line-height: 1.6;
+}
+
+.ide-textarea,
+.ide-new-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 16px;
+  font-family: 'Google Sans Code', 'Fira Code', monospace;
+  font-size: 14.5px;
+  color: #f1f5f9;
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+  caret-color: #a855f7;
+}
+
+.ide-textarea::placeholder,
+.ide-new-textarea::placeholder {
+  color: #64748b;
+}
+
+/* Console Panel */
+.ide-output-panel,
+.ide-new-console-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ide-terminal,
+.ide-new-console {
+  flex: 1;
+  background: #060a17;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  font-family: 'Google Sans Code', 'Fira Code', monospace;
+  font-size: 14px;
+  color: #34d399;
+  line-height: 1.5;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.ide-new-console span {
+  white-space: pre-wrap;
 }
 
 .prompt {
-  color: #3b82f6;
-  margin-right: 10px;
+  color: #a855f7;
+  margin-right: 8px;
   font-weight: bold;
 }
 
-/* EDITOR DE CÓDIGO */
-.ide-editor-panel {
-  flex: 1;
+/* Action Buttons Container */
+.ide-actions,
+.ide-new-actions {
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 12px;
 }
 
-.ide-textarea {
-  flex: 1;
-  background-color: #1e1e1e;
-  border: 1px solid #2d2d2d;
-  border-radius: 12px 12px 0 0;
-  padding: 20px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
-  color: #d4d4d4;
-  resize: none;
-  outline: none;
-}
-
-.ide-textarea::placeholder {
-  color: #6b7280;
-}
-
-.ide-actions {
-  display: flex;
-  justify-content: space-between;
-  background-color: #1e1e1e;
-  padding: 15px 20px;
-  border: 1px solid #2d2d2d;
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-}
-
+/* Reset Button */
 .btn-ide-reset {
-  background-color: #334155;
-  color: #fff;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: bold;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.25s ease;
 }
 
 .btn-ide-reset:hover {
-  background-color: #475569;
+  background: rgba(51, 65, 85, 0.9);
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.btn-ide-executar {
-  background-color: #3b82f6;
-  color: #fff;
+/* Execute Button */
+.btn-ide-executar,
+.btn-ide-executar-new {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  color: #ffffff;
   border: none;
-  padding: 10px 30px;
-  border-radius: 8px;
-  font-weight: bold;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: 0.2s;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+  transition: all 0.25s ease;
 }
 
-.btn-ide-executar:hover {
-  background-color: #2563eb;
+.btn-ide-executar:hover,
+.btn-ide-executar-new:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
 }
 
+/* Confirm / Next Mission Button */
+.btn-ide-confirmar {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btn-ide-confirmar:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
 
 /* =========================================
-   ESTILOS DA LIÇÃO 2 (DRAG AND DROP COMPACTO)
-========================================= */
+   ESTILOS DA LIÇÃO 2 (DRAG AND DROP GLASS)
+   ========================================= */
 
 .licao-header-center {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
   color: white;
 }
 
 .dnd-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr; /* Coluna esquerda menor, direita maior */
-  gap: 40px;
+  grid-template-columns: 1fr 2fr;
+  gap: 32px;
   max-width: 1000px;
   margin: 0 auto;
 }
 
 .dnd-title {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 800;
+  color: #c084fc;
   letter-spacing: 1px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   text-transform: uppercase;
 }
 
 .dados-soltos-box {
-  border: 1px dashed #334155;
-  border-radius: 12px;
-  padding: 25px;
+  border: 1px dashed rgba(168, 85, 247, 0.4);
+  border-radius: 16px;
+  padding: 20px;
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 12px;
   min-height: 200px;
   align-content: flex-start;
-  background-color: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
 }
 
 .dnd-item {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 10px 18px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 16px;
   cursor: grab;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-family: 'Courier New', Courier, monospace;
+  gap: 10px;
+  font-family: 'Google Sans Code', monospace;
   font-weight: bold;
   color: #f8fafc;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
   user-select: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .dnd-item i {
-  color: #475569;
+  color: #94a3b8;
   font-size: 14px;
+}
+
+.dnd-item:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+  transform: translateY(-2px);
 }
 
 .dnd-item:active {
   cursor: grabbing;
-  transform: scale(0.95);
+  transform: scale(0.96);
   border-color: #3b82f6;
 }
 
 .dnd-item.small {
-  padding: 8px 14px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 13px;
 }
 
 .gavetas-area {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* Espaço entre as gavetas */
+  gap: 20px;
 }
 
 .gaveta {
   position: relative;
-  border-radius: 12px;
-  min-height: 110px; /* Mais curtas para não precisar scrollar */
-  padding: 30px 20px 20px 20px;
+  border-radius: 16px;
+  min-height: 100px;
+  padding: 24px 18px 16px 18px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
   justify-content: center;
-  transition: 0.3s;
-  background-color: #0f172a;
+  transition: all 0.3s ease;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
 }
 
 .gaveta-placeholder {
-  color: #475569;
-  font-size: 14px;
+  color: #64748b;
+  font-size: 13px;
   font-style: italic;
 }
 
@@ -252,23 +426,37 @@
   position: absolute;
   top: -12px;
   left: 20px;
-  /* Cor de fundo igual ao body para dar o efeito de "corte" na linha */
-  background-color: #0b1120; /* Ajuste para a cor exata do seu fundo principal */
-  padding: 0 10px;
-  font-size: 13px;
-  font-weight: bold;
+  background: #0b1329;
+  padding: 2px 12px;
+  font-size: 12px;
+  font-weight: 800;
   color: #f8fafc;
-  border-radius: 4px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
 }
 
-/* Cores Neon das Gavetas baseadas no Figma */
-.gaveta-string { border: 2px solid #00d26a; }
-.gaveta-number { border: 2px solid #a855f7; }
-.gaveta-boolean { border: 2px solid #f97316; }
+/* Cores Neon das Gavetas */
+.gaveta-string {
+  border: 2px solid #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+.gaveta-number {
+  border: 2px solid #a855f7;
+  background: rgba(168, 85, 247, 0.08);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.gaveta-boolean {
+  border: 2px solid #f97316;
+  background: rgba(249, 115, 22, 0.08);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
+}
 
 /* Animação de Erro */
 .gaveta.erro {
-  background-color: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.15);
   border-color: #ef4444;
   animation: shake 0.4s;
 }
@@ -281,230 +469,22 @@
   100% { transform: translateX(0); }
 }
 
-/* =========================================
-   ESTILOS DA NOVA IDE MODELO 2 (FIGMA SOMA)
-========================================= */
+/* Responsive */
+@media (max-width: 900px) {
+  .ide-container,
+  .ide-new-container {
+    flex-direction: column;
+    padding: 16px;
+  }
 
-.ide-new-container {
-  display: flex;
-  gap: 20px;
-  height: calc(100vh - 120px); /* Ajuste pro tamanho da Topbar */
-  padding: 20px;
-  background-color: transparent;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  position: relative;
+  .ide-sidebar,
+  .ide-new-sidebar,
+  .ide-main,
+  .ide-new-main {
+    width: 100%;
+  }
+
+  .dnd-grid {
+    grid-template-columns: 1fr;
+  }
 }
-
-/* --- PAINEL ESQUERDO: INSTRUÇÕES (roxo) --- */
-.ide-new-sidebar {
-  width: 30%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.back-arrow {
-    font-size: 20px;
-    cursor: pointer;
-    color: #cbd5e1;
-    margin-bottom: -10px;
-}
-
-.ide-new-title {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.ide-new-title h2 {
-  margin: 0;
-  font-size: 22px;
-}
-
-.ide-new-box {
-  background-color: #1a2332; /* Cor de fundo escura */
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.ide-new-box.purple {
-    background-color: #131221; /* Cor de fundo arroxeada do Figma */
-}
-
-.ide-new-box h4 {
-  margin: 0 0 10px 0;
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: #94a3b8;
-  text-transform: uppercase;
-}
-
-.ide-new-box p, .ide-new-box ol {
-  font-size: 15px;
-  line-height: 1.5;
-  color: #cbd5e1;
-  margin: 0;
-}
-
-.ide-new-box ol {
-    padding-left: 18px;
-}
-
-.ide-new-box ol li {
-    margin-bottom: 8px;
-}
-
-/* --- PAINEL DIREITO: EDITOR E CONSOLE --- */
-.ide-new-main {
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.ide-panel-header {
-  font-size: 11px;
-  font-weight: bold;
-  color: #94a3b8;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* EDITOR DE CÓDIGO */
-.ide-new-editor-panel {
-  flex: 2; /* Ocupa mais espaço */
-  display: flex;
-  flex-direction: column;
-}
-
-.ide-textarea-wrapper {
-    flex: 1;
-    display: flex;
-    background-color: #1a2332;
-    border: 1px solid #2d3748;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.line-numbers {
-    padding: 15px 10px;
-    background-color: #131824; /* Fundo mais escuro pras linhas */
-    color: #475569;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 15px;
-    text-align: right;
-    user-select: none;
-    line-height: 1.5;
-}
-
-.ide-new-textarea {
-  flex: 1;
-  background-color: transparent;
-  border: none;
-  padding: 15px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 15px;
-  color: #cbd5e1; /* Cor do texto (mais claro) */
-  resize: none;
-  outline: none;
-  line-height: 1.5;
-}
-
-.ide-new-textarea::placeholder {
-  color: #6b7280;
-}
-
-/* CONSOLE (Fundo preto total) */
-.ide-new-console-panel {
-  flex: 1; /* Ocupa menos espaço que o editor */
-  display: flex;
-  flex-direction: column;
-}
-
-.ide-new-console {
-  flex: 1;
-  background-color: #000000; /* Preto total igual ao Figma */
-  border-radius: 12px;
-  padding: 15px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 15px;
-  color: #fff;
-  line-height: 1.4;
-  overflow-y: auto; /* Scroll se o texto for grande */
-}
-
-.ide-new-console span {
-  white-space: pre-wrap; /* Mantém as quebras de linha */
-}
-
-.prompt {
-  color: #6b7280; /* Cor do prompt >_ */
-  margin-right: 10px;
-}
-
-/* BOTÕES DE AÇÃO NA DIREITA */
-.ide-new-actions {
-  display: flex;
-  justify-content: flex-end; /* Alinha os botões na direita */
-  gap: 15px;
-  margin-top: 10px;
-}
-
-/* Botão reset simples */
-.btn-ide-reset {
-  background-color: #334155;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* Botão Executar Azul do Figma */
-.btn-ide-executar-new {
-  background-color: #3b82f6; /* Azul do Figma */
-  color: #fff;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
-.btn-ide-executar-new:hover {
-  background-color: #2563eb;
-}
-
-/* Botão Confirmar/Avançar Verde (Sucesso) */
-.btn-ide-confirmar {
-  background-color: #10b981; /* Verde esmeralda */
-  color: #fff;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  text-transform: uppercase;
-  transition: background-color 0.2s;
-  text-decoration: none;
-}
-
-.btn-ide-confirmar:hover {
-  background-color: #059669;
-}
